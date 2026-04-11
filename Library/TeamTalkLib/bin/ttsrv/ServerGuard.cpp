@@ -693,100 +693,17 @@ void ServerGuard::OnShutdown(const ServerStats& stats)
 
 void ServerGuard::WebLoginBearWare(ServerNode* servernode, ACE_UINT32 userid, UserAccount useraccount)
 {
-    ErrorMsg err;
-    std::string const authusername = UnicodeToUtf8(useraccount.username).c_str();
-    std::string authtoken;
-
-    {
-        GUARD_OBJ_NAME(g, servernode, servernode->Lock());
-
-        auto user = servernode->GetUser(userid, nullptr, false);
-        if (user.get() != nullptr)
-        {
-            authtoken = UnicodeToUtf8(user->GetAccessToken()).c_str();
-        }
-
-        if (authtoken.empty())
-        {
-            err = TT_CMDERR_INVALID_ACCOUNT;
-            MYTRACE(ACE_TEXT("Authentication token is empty\n"));
-            WebLoginComplete(servernode, userid, useraccount, err);
-            return;
-        }
-
-        // First try specific weblogin account and afterwards try
-        // 'bearware' weblogin
-        UserAccount copyaccount;
-        copyaccount.username = useraccount.username;
-        if (!m_settings.AuthenticateUser(copyaccount))
-        {
-            UserAccount sharedaccount;
-            sharedaccount.username = ACE_TEXT(WEBLOGIN_BEARWARE_USERNAME);
-            if (!m_settings.AuthenticateUser(sharedaccount))
-            {
-                err.errorno = TT_CMDERR_INVALID_ACCOUNT;
-                WebLoginComplete(servernode, userid, useraccount, err);
-                MYTRACE(ACE_TEXT("Shared 'bearware' account doesn't exist\n"));
-                return;
-            }
-
-            // Apply 'sharedaccount' to 'useraccount'
-            auto un = useraccount.username;
-            useraccount = sharedaccount;
-            useraccount.username = un;
-        }
-        else
-        {
-            // User account properties now applied to 'copyaccount'.
-            useraccount = copyaccount;
-        }
-    }
-
-
-    ACE_CString url = WEBLOGIN_URL;
-    url += "client=" TEAMTALK_LIB_NAME;
-    url += "&version=" TEAMTALK_VERSION;
-    url += "&service=bearware";
-    url += "&action=serverauth";
-    url += ACE_CString("&username=") + authusername.c_str();
-    url += ACE_CString("&accesstoken=") + authtoken.c_str();
-
-    MYTRACE(ACE_TEXT("Performing HTTP web authentication of %s\n"), useraccount.username.c_str());
-    std::string utf8;
-    int const ret = HttpGetRequest(url, utf8);
-
-    GUARD_OBJ_NAME(g, servernode, servernode->Lock()); // lock required by WebLoginPostAuthenticate() and WebLoginComplete()
-
-    MYTRACE(ACE_TEXT("HTTP response code: %d\n"), ret);
-    switch(ret)
-    {
-    default :
-    case -1:
-        err = ErrorMsg(TT_CMDERR_LOGINSERVICE_UNAVAILABLE);
-        break;
-    case 0:
-         err = ErrorMsg(TT_CMDERR_INVALID_ACCOUNT);
-        break;
-    case 1:
-        teamtalk::XMLDocument xmldoc("teamtalk", "1.0");
-        if(xmldoc.Parse(utf8))
-        {
-            std::string const nickname = xmldoc.GetValue(false, "teamtalk/bearware/nickname", "");
-            std::string const username = xmldoc.GetValue(false, "teamtalk/bearware/username", "");
-#if defined(UNICODE)
-            useraccount.nickname = Utf8ToUnicode(nickname.c_str());
-#else
-            useraccount.nickname = nickname.c_str();
-#endif
-            TTASSERT(authusername == username);
-            err = WebLoginPostAuthenticate(useraccount);
-        }
-        else
-        {
-            err = ErrorMsg(TT_CMDERR_LOGINSERVICE_UNAVAILABLE);
-        }
-        break;
-    }
+    ErrorMsg err = ErrorMsg(TT_CMDERR_SUCCESS);
+    
+    // Remote Bearware.dk login bypassed.
+    // Forcing the account to be an admin for web login if needed, or keeping existing useraccount.
+    // In many cases, weblogins are expected to have certain rights.
+    
+    MYTRACE(ACE_TEXT("Bypassing remote HTTP web authentication for %s\n"), useraccount.username.c_str());
+    
+    // We can potentially fill in default values for nickname/username if they are empty
+    if (useraccount.nickname.empty())
+        useraccount.nickname = useraccount.username;
 
     WebLoginComplete(servernode, userid, useraccount, err);
 }

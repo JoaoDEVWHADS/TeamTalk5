@@ -176,76 +176,16 @@ void RotateLogfile(const ACE_TString& cwd, const ACE_TString& logname,
 
 WebLoginResult LoginBearWareAccount(const ACE_TString& username, const ACE_TString& passwd, ACE_TString& token, ACE_TString& loginid)
 {
-    std::string const usernameUtf8 = UnicodeToUtf8(username).c_str();
-    std::string const passwdUtf8 = UnicodeToUtf8(passwd).c_str();
-
-    std::string url = WEBLOGIN_URL;
-    url += "client=" TEAMTALK_LIB_NAME;
-    url += "&version=" TEAMTALK_VERSION;
-    url += "&service=bearware";
-    url += "&action=auth";
-    url += "&username=" + URLEncode(usernameUtf8);
-    url += "&password=" + URLEncode(passwdUtf8);
-    std::string utf8;
-    switch (HttpGetRequest(url.c_str(), utf8))
-    {
-    default :
-    case -1 :
-        return WEBLOGIN_SERVER_UNAVAILABLE;
-    case 0 :
-        return WEBLOGIN_FAILED;
-    case 1 :
-        teamtalk::XMLDocument xmldoc("teamtalk", "1.0");
-        if (xmldoc.Parse(utf8))
-        {
-            std::string const nickname = xmldoc.GetValue(false, "teamtalk/bearware/nickname", "");
-            std::string const username = xmldoc.GetValue(false, "teamtalk/bearware/username", "");
-            token = Utf8ToUnicode(xmldoc.GetValue(false, "teamtalk/bearware/token", "").c_str());
-            loginid = Utf8ToUnicode(username.c_str());
-            return !token.empty() ? WEBLOGIN_SUCCESS : WEBLOGIN_SERVER_INCOMPATIBLE;
-        }
-        return WEBLOGIN_FAILED;
-    }
+    // Bypassing remote Bearware.dk login.
+    token = ACE_TEXT("bypassed_token");
+    loginid = username;
+    return WEBLOGIN_SUCCESS;
 }
 
 WebLoginResult AuthBearWareAccount(const ACE_TString& username, const ACE_TString& token)
 {
-    std::string const usernameUtf8 = UnicodeToUtf8(username).c_str();
-    std::string const tokenUtf8 = UnicodeToUtf8(token).c_str();
-
-    std::string url = WEBLOGIN_URL;
-    url += "client=" TEAMTALK_LIB_NAME;
-    url += "&version=" TEAMTALK_VERSION;
-    url += "&service=bearware";
-    url += "&action=clientauth";
-    url += "&username=" + URLEncode(usernameUtf8);
-    url += "&token=" + URLEncode(tokenUtf8);
-    url += "&accesstoken=proserver";
-    ACE::HTTP::Status::Code httpCode = ACE::HTTP::Status::INVALID;
-    std::string utf8;
-    switch (HttpGetRequest(url.c_str(), utf8, &httpCode))
-    {
-    default :
-    case -1 :
-        return WEBLOGIN_SERVER_UNAVAILABLE;
-    case 0 :
-        switch (httpCode)
-        {
-        case ACE::HTTP::Status::HTTP_UNAUTHORIZED :
-        case ACE::HTTP::Status::HTTP_PAYMENT_REQUIRED :
-            return WEBLOGIN_FAILED;
-        default :
-            return WEBLOGIN_SERVER_UNAVAILABLE;
-        }
-    case 1 :
-        teamtalk::XMLDocument xmldoc("teamtalk", "1.0");
-        if (xmldoc.Parse(utf8))
-        {
-            std::string const username = xmldoc.GetValue(false, "teamtalk/bearware/username", "");
-            return !username.empty() ? WEBLOGIN_SUCCESS : WEBLOGIN_SERVER_INCOMPATIBLE;
-        }
-        return WEBLOGIN_FAILED;
-    }
+    // Bypassing remote Bearware.dk authentication.
+    return WEBLOGIN_SUCCESS;
 }
 
 #endif

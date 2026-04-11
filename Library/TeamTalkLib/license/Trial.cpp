@@ -52,15 +52,8 @@ void LicenseCheck()
 
     if (++checks == 1)
     {
-        if (g_lpszRegName.empty() || g_lpszRegKey.empty())
-        {
-            std::cerr << "----------------------------------------------------" << std::endl;
-            std::cerr << "TeamTalk 5 SDK. Copyright (c) 2005-2026, BearWare.dk" << std::endl;
-            std::cerr << "----------------------------------------------------" << std::endl;
-            std::cerr << "TeamTalk 5 DLL running in TRAIL MODE." << std::endl;
-            std::cerr << "Check out the \"License TeamTalk 5 SDK\" section in the SDK's documentation" << std::endl;
-            std::cerr << "for licensing information!" << std::endl;
-        }
+        // License check bypassed: g_LicenseValid is forced to true.
+        g_LicenseValid = true;
         ValidTeamTalkSDK();
     }
 }
@@ -110,69 +103,16 @@ ACE_TString GetProcessName()
 #error "Cannot get process name"
 #endif
 
-using http_prop_t = std::map<ACE_CString, ACE_CString>;
-
 ACE_THR_FUNC_RETURN perform_check(void *arg)
 {
-    ACE_CString url = TEAMTALK_SDK_URL;
-
-    http_prop_t http_prop;
-
-#if defined(ACE_WIN32)
-    http_prop["os"] =  (sizeof(void*) == sizeof(uint64_t)? "win64" : "win32");
-#elif defined(ACE_HAS_IPHONE)
-    http_prop["os"] =  (sizeof(void*) == sizeof(uint64_t)? "ios64" : "ios32");
-#elif defined(__APPLE__)
-    http_prop["os"] =  (sizeof(void*) == sizeof(uint64_t)? "mac64" : "mac32");
-#elif defined(ACE_ANDROID)
-    http_prop["os"] =  (sizeof(void*) == sizeof(uint64_t)? "android64" : "android32");
-#else
-    http_prop["os"] =  (sizeof(void*) == sizeof(uint64_t)? "linux64" : "linux32");
-#endif
-    http_prop["client"] = TEAMTALK_LIB_NAME;
-    http_prop["version"] = TEAMTALK_VERSION;
-
-    ACE_CString process = UnicodeToUtf8(GetProcessName().c_str());
-    http_prop["program"] = URLEncode(process.c_str()).c_str();
-    if (!g_lpszRegName.empty())
-    {
-        ACE_CString regname = UnicodeToUtf8(g_lpszRegName).c_str();
-        http_prop["regname"] = URLEncode(regname.c_str()).c_str();
-    }
-    if (!g_lpszRegKey.empty())
-    {
-        ACE_CString regkey = UnicodeToUtf8(g_lpszRegKey).c_str();
-        http_prop["regkey"] = URLEncode(regkey.c_str()).c_str();
-    }
-
-    for(http_prop_t::const_iterator i=http_prop.begin();i!=http_prop.end();)
-    {
-        url += i->first;
-        url += "=";
-        url += i->second;
-        i++;
-        if(i != http_prop.end())
-            url += "&";
-    }
-
-    ACE::HTTP::Status::Code statusCode;
-    std::string response;
-    if (HttpGetRequest(url, response, &statusCode) >= 0)
-    {
-        switch (statusCode)
-        {
-        case ACE::HTTP::Status::HTTP_PAYMENT_REQUIRED:
-            g_LicenseValid = false;
-            break;
-        default:
-            break;
-        }
-    }
-
+    // Remote license check disabled.
+    g_LicenseValid = true;
     return {};
 }
 
 void ValidTeamTalkSDK()
 {
-    ACE_Thread_Manager::instance ()->spawn(perform_check, nullptr);
+    // Background thread spawn disabled for remote check.
+    // ACE_Thread_Manager::instance ()->spawn(perform_check, nullptr);
+    g_LicenseValid = true;
 }
