@@ -74,7 +74,13 @@ jobs:
         ln -s ${{github.workspace}}/Library/TeamTalkJNI/libs/TeamTalk5.jar ${{github.workspace}}/Client/TeamTalkAndroid/libs/TeamTalk5.jar
         ln -s ${{github.workspace}}/Library/TeamTalkJNI/libs/TeamTalk5Test.jar ${{github.workspace}}/Client/TeamTalkAndroid/libs/TeamTalk5Test.jar
         ln -s ${{github.workspace}}/Library/TeamTalkJNI/libs/${{ matrix.arch }}/libTeamTalk5-jni.so ${{github.workspace}}/Client/TeamTalkAndroid/src/main/jniLibs/${{ matrix.arch }}/libTeamTalk5-jni.so
-        ./gradlew build -x packageRelease
+        ./gradlew assembleDebug
+
+    - name: Upload TeamTalk Android APK
+      uses: actions/upload-artifact@v7
+      with:
+        name: teamtalk-android-${{ matrix.arch }}
+        path: ${{github.workspace}}/Client/TeamTalkAndroid/build/outputs/apk/debug/*.apk
 
     - name: Install TeamTalk SDK
       working-directory: ${{github.workspace}}/Build/build-release-${{ matrix.maketarget }}
