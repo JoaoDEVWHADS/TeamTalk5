@@ -21,22 +21,37 @@
  *
  */
 
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.engine.discovery.MethodSelector;
 
 public class SingleJUnitTestRunner {
     public static void main(String... args) throws ClassNotFoundException {
         String[] classAndMethod = args[0].split("#");
-        Request request = Request.method(Class.forName(classAndMethod[0]),
-                classAndMethod[1]);
+        String className = classAndMethod[0];
+        String methodName = classAndMethod[1];
 
-        Result result = new JUnitCore().run(request);
+        Class<?> testClass = Class.forName(className);
+        
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                .selectors(DiscoverySelectors.selectMethod(testClass, methodName))
+                .build();
 
-        for (Failure failure : result.getFailures()) {
-            System.out.println(failure.toString());
+        Launcher launcher = LauncherFactory.create();
+        SummaryTestExecutionListener listener = new SummaryTestExecutionListener();
+        launcher.registerTestExecutionListeners(listener);
+
+        launcher.execute(request);
+        
+        if (listener.testsFailed()) {
+            System.exit(1);
+        } else {
+            System.exit(0);
         }
-        System.exit(result.wasSuccessful() ? 0 : 1);
     }
 }

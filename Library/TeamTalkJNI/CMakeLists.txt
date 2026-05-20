@@ -223,79 +223,158 @@ if (Java_FOUND)
 
   # JUnit tests
 
+  # JUnit 5 JAR URLs
+  set (JUNIT_VERSION 5.9.3)
+  set (JUNIT_PLATFORM_VERSION 1.9.3)
+  
   if (MSVC)
-    ExternalProject_Add(hamcrest-core
-      URL                 https://repo1.maven.org/maven2/org/hamcrest/hamcrest/3.0/hamcrest-3.0.jar
+    ExternalProject_Add(junit-jupiter-api
+      URL                 https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/${JUNIT_VERSION}/junit-jupiter-api-${JUNIT_VERSION}.jar
       DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       hamcrest-core.jar
+      DOWNLOAD_NAME       junit-jupiter-api.jar
       UPDATE_COMMAND      ""
       INSTALL_COMMAND     ""
       INSTALL_DIR         ""
       CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/hamcrest-core.jar ${CMAKE_CURRENT_LIST_DIR}/libs/hamcrest-core.jar
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-jupiter-api.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-api.jar
       )
 
-    ExternalProject_Add(junit4
-      URL                 https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar
+    ExternalProject_Add(junit-jupiter-engine
+      URL                 https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/${JUNIT_VERSION}/junit-jupiter-engine-${JUNIT_VERSION}.jar
       DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit4.jar
+      DOWNLOAD_NAME       junit-jupiter-engine.jar
       UPDATE_COMMAND      ""
       INSTALL_COMMAND     ""
       INSTALL_DIR         ""
       CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit4.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit4.jar
-      DEPENDS             hamcrest-core
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-jupiter-engine.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-engine.jar
+      DEPENDS             junit-jupiter-api
       )
-    ExternalProject_Get_Property(junit4 DOWNLOAD_DIR)
-    set (junit ${DOWNLOAD_DIR}/junit4.jar)
+
+    ExternalProject_Add(junit-platform-commons
+      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/${JUNIT_PLATFORM_VERSION}/junit-platform-commons-${JUNIT_PLATFORM_VERSION}.jar
+      DOWNLOAD_NO_EXTRACT TRUE
+      DOWNLOAD_NAME       junit-platform-commons.jar
+      UPDATE_COMMAND      ""
+      INSTALL_COMMAND     ""
+      INSTALL_DIR         ""
+      CONFIGURE_COMMAND   ""
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-commons.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-commons.jar
+      )
+
+    ExternalProject_Add(junit-platform-engine
+      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/${JUNIT_PLATFORM_VERSION}/junit-platform-engine-${JUNIT_PLATFORM_VERSION}.jar
+      DOWNLOAD_NO_EXTRACT TRUE
+      DOWNLOAD_NAME       junit-platform-engine.jar
+      UPDATE_COMMAND      ""
+      INSTALL_COMMAND     ""
+      INSTALL_DIR         ""
+      CONFIGURE_COMMAND   ""
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-engine.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-engine.jar
+      DEPENDS             junit-platform-commons
+      )
+
+    ExternalProject_Add(junit-platform-launcher
+      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/${JUNIT_PLATFORM_VERSION}/junit-platform-launcher-${JUNIT_PLATFORM_VERSION}.jar
+      DOWNLOAD_NO_EXTRACT TRUE
+      DOWNLOAD_NAME       junit-platform-launcher.jar
+      UPDATE_COMMAND      ""
+      INSTALL_COMMAND     ""
+      INSTALL_DIR         ""
+      CONFIGURE_COMMAND   ""
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-launcher.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-launcher.jar
+      DEPENDS             junit-platform-engine
+      )
+
+    ExternalProject_Add(junit-platform-suite
+      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-suite/${JUNIT_PLATFORM_VERSION}/junit-platform-suite-${JUNIT_PLATFORM_VERSION}.jar
+      DOWNLOAD_NO_EXTRACT TRUE
+      DOWNLOAD_NAME       junit-platform-suite.jar
+      UPDATE_COMMAND      ""
+      INSTALL_COMMAND     ""
+      INSTALL_DIR         ""
+      CONFIGURE_COMMAND   ""
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-suite.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-suite.jar
+      DEPENDS             junit-platform-launcher
+      )
+
+    ExternalProject_Get_Property(junit-platform-suite DOWNLOAD_DIR)
+    set (junit-jupiter-api-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-api.jar)
+    set (junit-jupiter-engine-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-engine.jar)
+    set (junit-platform-commons-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-commons.jar)
+    set (junit-platform-engine-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-engine.jar)
+    set (junit-platform-launcher-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-launcher.jar)
+    set (junit-platform-suite-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-suite.jar)
+    set (junit-jars ${junit-jupiter-api-jar} ${junit-jupiter-engine-jar} ${junit-platform-commons-jar} ${junit-platform-engine-jar} ${junit-platform-launcher-jar} ${junit-platform-suite-jar})
   else()
-    find_jar (junit NAMES junit4 junit
+    find_jar (junit-jupiter-api NAMES junit-jupiter-api
       PATHS ENV JUNIT_HOME
-      DOC "Find JUnit")
-    set (JUNITJAR ${junit})
+      DOC "Find JUnit Jupiter API")
+    find_jar (junit-jupiter-engine NAMES junit-jupiter-engine
+      PATHS ENV JUNIT_HOME
+      DOC "Find JUnit Jupiter Engine")
+    find_jar (junit-platform-commons NAMES junit-platform-commons
+      PATHS ENV JUNIT_HOME
+      DOC "Find JUnit Platform Commons")
+    find_jar (junit-platform-engine NAMES junit-platform-engine
+      PATHS ENV JUNIT_HOME
+      DOC "Find JUnit Platform Engine")
+    find_jar (junit-platform-launcher NAMES junit-platform-launcher
+      PATHS ENV JUNIT_HOME
+      DOC "Find JUnit Platform Launcher")
+    find_jar (junit-platform-suite NAMES junit-platform-suite
+      PATHS ENV JUNIT_HOME
+      DOC "Find JUnit Platform Suite")
+    set (junit-jars ${junit-jupiter-api} ${junit-jupiter-engine} ${junit-platform-commons} ${junit-platform-engine} ${junit-platform-launcher} ${junit-platform-suite})
   endif()
 
-  if (NOT junit)
-    message(WARNING "Cannot find JUnit jar. Skipping JUnit tests.")
+  if (NOT junit-jupiter-api)
+    message(WARNING "Cannot find JUnit 5 jars. Skipping JUnit tests.")
   else()
     if (BUILD_TEAMTALK_LIBRARY_JAR)
-      add_jar (TeamTalk5Test INCLUDE_JARS TeamTalk5JAR ${junit}
-        ENTRY_POINT org/junit/runner/JUnitCore
+      add_jar (TeamTalk5Test INCLUDE_JARS TeamTalk5JAR ${junit-jars}
+        ENTRY_POINT org/junit/platform/console/ConsoleLauncher
         SOURCES test/dk/bearware/TeamTalkTestCase.java
         test/dk/bearware/TeamTalkTestCaseBase.java
         test/dk/bearware/TeamTalkStdTestCase.java
+        test/dk/bearware/TestTimingExtension.java
         test/TeamTalkStdTestSuite.java
         test/SingleJUnitTestRunner.java
+        test/SummaryTestExecutionListener.java
         OUTPUT_DIR libs)
       if (MSVC)
-        add_dependencies(TeamTalk5Test junit4)
+        add_dependencies(TeamTalk5Test junit-platform-suite)
       endif()
       install (FILES ${CMAKE_CURRENT_LIST_DIR}/libs/TeamTalk5Test.jar DESTINATION Library/TeamTalkJNI/libs)
     endif()
 
     if (BUILD_TEAMTALK_LIBRARY_JARPRO)
-      add_jar (TeamTalk5ProTest INCLUDE_JARS TeamTalk5ProJAR ${junit}
-        ENTRY_POINT org/junit/runner/JUnitCore
+      add_jar (TeamTalk5ProTest INCLUDE_JARS TeamTalk5ProJAR ${junit-jars}
+        ENTRY_POINT org/junit/platform/console/ConsoleLauncher
         SOURCES test/dk/bearware/TeamTalkTestCase.java
         test/dk/bearware/TeamTalkTestCaseBase.java
         test/dk/bearware/TeamTalkProTestCase.java
+        test/dk/bearware/TestTimingExtension.java
         test/TeamTalkProTestSuite.java
         test/SingleJUnitTestRunner.java
+        test/SummaryTestExecutionListener.java
         OUTPUT_DIR libs)
       install (FILES ${CMAKE_CURRENT_LIST_DIR}/libs/TeamTalk5ProTest.jar DESTINATION Library/TeamTalkJNI/libs)
 
-      add_jar (TeamTalk5SrvTest INCLUDE_JARS TeamTalk5ProJAR ${junit}
-        ENTRY_POINT org/junit/runner/JUnitCore
+      add_jar (TeamTalk5SrvTest INCLUDE_JARS TeamTalk5ProJAR ${junit-jars}
+        ENTRY_POINT org/junit/platform/console/ConsoleLauncher
         SOURCES test/dk/bearware/TeamTalkTestCaseBase.java
         test/dk/bearware/TeamTalkServerTestCase.java
+        test/dk/bearware/TestTimingExtension.java
         test/TeamTalkServerTestSuite.java
         test/SingleJUnitTestRunner.java
+        test/SummaryTestExecutionListener.java
         OUTPUT_DIR libs)
       install (FILES ${CMAKE_CURRENT_LIST_DIR}/libs/TeamTalk5SrvTest.jar DESTINATION Library/TeamTalkJNI/libs)
 
       if (MSVC)
-        add_dependencies(TeamTalk5ProTest junit4)
-        add_dependencies(TeamTalk5SrvTest junit4)
+        add_dependencies(TeamTalk5ProTest junit-platform-suite)
+        add_dependencies(TeamTalk5SrvTest junit-platform-suite)
       endif()
     endif(BUILD_TEAMTALK_LIBRARY_JARPRO)
   endif()
