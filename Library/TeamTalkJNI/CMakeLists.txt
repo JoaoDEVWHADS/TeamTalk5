@@ -242,13 +242,13 @@ if (Java_FOUND)
     set (junit-platform-console-standalone-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-console-standalone.jar)
     set (junit-jars ${junit-platform-console-standalone-jar})
   else()
-    find_jar (junit-platform-console-standalone-jar NAMES junit-platform-console-standalone
+    find_jar (junit-platform-console-standalone NAMES junit-platform-console-standalone
       PATHS ENV JUNIT_HOME
       DOC "Find JUnit Platform Console Standalone")
-    set (junit-jars ${junit-platform-console-standalone-jar})
+    set (junit-jars ${junit-platform-console-standalone})
   endif()
 
-  if (NOT junit-jupiter-api)
+  if (NOT junit-platform-console-standalone)
     message(WARNING "Cannot find JUnit 5 jars. Skipping JUnit tests.")
   else()
     if (BUILD_TEAMTALK_LIBRARY_JAR)
@@ -263,7 +263,7 @@ if (Java_FOUND)
         test/SummaryTestExecutionListener.java
         OUTPUT_DIR libs)
       if (MSVC)
-        add_dependencies(TeamTalk5Test junit-platform-suite)
+        add_dependencies(TeamTalk5Test junit-platform-console-standalone)
       endif()
       install (FILES ${CMAKE_CURRENT_LIST_DIR}/libs/TeamTalk5Test.jar DESTINATION Library/TeamTalkJNI/libs)
     endif()
