@@ -224,108 +224,28 @@ if (Java_FOUND)
   # JUnit tests
 
   # JUnit 5 JAR URLs
-  set (JUNIT_VERSION 5.9.3)
   set (JUNIT_PLATFORM_VERSION 1.9.3)
   
   if (MSVC)
-    ExternalProject_Add(junit-jupiter-api
-      URL                 https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/${JUNIT_VERSION}/junit-jupiter-api-${JUNIT_VERSION}.jar
+    ExternalProject_Add(junit-platform-console-standalone
+      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${JUNIT_PLATFORM_VERSION}/junit-platform-console-standalone-${JUNIT_PLATFORM_VERSION}.jar
       DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit-jupiter-api.jar
+      DOWNLOAD_NAME       junit-platform-console-standalone.jar
       UPDATE_COMMAND      ""
       INSTALL_COMMAND     ""
       INSTALL_DIR         ""
       CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-jupiter-api.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-api.jar
+      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-console-standalone.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-console-standalone.jar
       )
 
-    ExternalProject_Add(junit-jupiter-engine
-      URL                 https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/${JUNIT_VERSION}/junit-jupiter-engine-${JUNIT_VERSION}.jar
-      DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit-jupiter-engine.jar
-      UPDATE_COMMAND      ""
-      INSTALL_COMMAND     ""
-      INSTALL_DIR         ""
-      CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-jupiter-engine.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-engine.jar
-      DEPENDS             junit-jupiter-api
-      )
-
-    ExternalProject_Add(junit-platform-commons
-      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/${JUNIT_PLATFORM_VERSION}/junit-platform-commons-${JUNIT_PLATFORM_VERSION}.jar
-      DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit-platform-commons.jar
-      UPDATE_COMMAND      ""
-      INSTALL_COMMAND     ""
-      INSTALL_DIR         ""
-      CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-commons.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-commons.jar
-      )
-
-    ExternalProject_Add(junit-platform-engine
-      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/${JUNIT_PLATFORM_VERSION}/junit-platform-engine-${JUNIT_PLATFORM_VERSION}.jar
-      DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit-platform-engine.jar
-      UPDATE_COMMAND      ""
-      INSTALL_COMMAND     ""
-      INSTALL_DIR         ""
-      CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-engine.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-engine.jar
-      DEPENDS             junit-platform-commons
-      )
-
-    ExternalProject_Add(junit-platform-launcher
-      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/${JUNIT_PLATFORM_VERSION}/junit-platform-launcher-${JUNIT_PLATFORM_VERSION}.jar
-      DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit-platform-launcher.jar
-      UPDATE_COMMAND      ""
-      INSTALL_COMMAND     ""
-      INSTALL_DIR         ""
-      CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-launcher.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-launcher.jar
-      DEPENDS             junit-platform-engine
-      )
-
-    ExternalProject_Add(junit-platform-suite
-      URL                 https://repo1.maven.org/maven2/org/junit/platform/junit-platform-suite/${JUNIT_PLATFORM_VERSION}/junit-platform-suite-${JUNIT_PLATFORM_VERSION}.jar
-      DOWNLOAD_NO_EXTRACT TRUE
-      DOWNLOAD_NAME       junit-platform-suite.jar
-      UPDATE_COMMAND      ""
-      INSTALL_COMMAND     ""
-      INSTALL_DIR         ""
-      CONFIGURE_COMMAND   ""
-      BUILD_COMMAND       ${CMAKE_COMMAND} -E copy <DOWNLOAD_DIR>/junit-platform-suite.jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-suite.jar
-      DEPENDS             junit-platform-launcher
-      )
-
-    ExternalProject_Get_Property(junit-platform-suite DOWNLOAD_DIR)
-    set (junit-jupiter-api-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-api.jar)
-    set (junit-jupiter-engine-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-jupiter-engine.jar)
-    set (junit-platform-commons-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-commons.jar)
-    set (junit-platform-engine-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-engine.jar)
-    set (junit-platform-launcher-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-launcher.jar)
-    set (junit-platform-suite-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-suite.jar)
-    set (junit-jars ${junit-jupiter-api-jar} ${junit-jupiter-engine-jar} ${junit-platform-commons-jar} ${junit-platform-engine-jar} ${junit-platform-launcher-jar} ${junit-platform-suite-jar})
+    ExternalProject_Get_Property(junit-platform-console-standalone DOWNLOAD_DIR)
+    set (junit-platform-console-standalone-jar ${CMAKE_CURRENT_LIST_DIR}/libs/junit-platform-console-standalone.jar)
+    set (junit-jars ${junit-platform-console-standalone-jar})
   else()
-    find_jar (junit-jupiter-api NAMES junit-jupiter-api
+    find_jar (junit-platform-console-standalone-jar NAMES junit-platform-console-standalone
       PATHS ENV JUNIT_HOME
-      DOC "Find JUnit Jupiter API")
-    find_jar (junit-jupiter-engine NAMES junit-jupiter-engine
-      PATHS ENV JUNIT_HOME
-      DOC "Find JUnit Jupiter Engine")
-    find_jar (junit-platform-commons NAMES junit-platform-commons
-      PATHS ENV JUNIT_HOME
-      DOC "Find JUnit Platform Commons")
-    find_jar (junit-platform-engine NAMES junit-platform-engine
-      PATHS ENV JUNIT_HOME
-      DOC "Find JUnit Platform Engine")
-    find_jar (junit-platform-launcher NAMES junit-platform-launcher
-      PATHS ENV JUNIT_HOME
-      DOC "Find JUnit Platform Launcher")
-    find_jar (junit-platform-suite NAMES junit-platform-suite
-      PATHS ENV JUNIT_HOME
-      DOC "Find JUnit Platform Suite")
-    set (junit-jars ${junit-jupiter-api} ${junit-jupiter-engine} ${junit-platform-commons} ${junit-platform-engine} ${junit-platform-launcher} ${junit-platform-suite})
+      DOC "Find JUnit Platform Console Standalone")
+    set (junit-jars ${junit-platform-console-standalone-jar})
   endif()
 
   if (NOT junit-jupiter-api)
