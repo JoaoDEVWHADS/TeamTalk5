@@ -18,7 +18,11 @@ env:
 jobs:
   build:
     if: "!startsWith(github.head_ref, 'debug') || startsWith(github.head_ref, 'debug-windows')"
+    permissions:
+      security-events: write
+      packages: read
     strategy:
+      fail-fast: false
       matrix:
         arch: [x86, x64]
         include:
@@ -35,7 +39,7 @@ jobs:
             portablearch: win64
             qtarch: win64_msvc2022_64
             qtmodules: 'qtmultimedia qtspeech'
-            qtversion: '6.10.*'
+            qtversion: '6.11.1'
             vcvars: vcvars64.bat
 
     runs-on: windows-latest
@@ -65,11 +69,12 @@ jobs:
         version: '${{ matrix.qtversion }}'
         modules: '${{ matrix.qtmodules }}'
         setup-python: false
+        aqtsource: 'aqtinstall@git+https://github.com/miurahr/aqtinstall.git@master'
 
     - name: Install Doxygen
       uses: ssciwr/doxygen-install@v2
       with:
-        version: '1.16.1'
+        version: '1.17.0'
 
     - name: Set up VSTest
       uses: darenm/Setup-VSTest@v1
@@ -107,6 +112,13 @@ jobs:
         start /wait Win32OpenSSL.exe /silent /sp- /suppressmsgboxes /DIR="C:\Program Files (x86)\OpenSSL"
         echo C:\Program Files (x86)\OpenSSL\bin>> %GITHUB_PATH%
 
+    - name: Initialize CodeQL
+      if: matrix.arch == 'x64'
+      uses: github/codeql-action/init@v4
+      with:
+        languages: csharp
+        build-mode: manual
+
     - name: Configure CMake for toolchain build
       working-directory: ${{runner.workspace}}
       run: >-
@@ -114,7 +126,6 @@ jobs:
         -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2=ON
         -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF=OFF
         -DFEATURE_WEBRTC=OFF
-        -DBUILD_TEAMTALK_CLIENT_TEAMTALKAPP_DOTNET=OFF
         -DTOOLCHAIN_INSTALL_PREFIX=${{runner.workspace}}/install-toolchain
         -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install-teamtalk
 
@@ -122,7 +133,7 @@ jobs:
       working-directory: ${{runner.workspace}}
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\${{ matrix.vcvars }}"
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\${{ matrix.vcvars }}"
         cmake --build output --parallel --config Release --target install
         echo ${{github.workspace}}\Library\TeamTalk_DLL>> %GITHUB_PATH%
         echo ${{github.workspace}}\Library\TeamTalkJNI\libs>> %GITHUB_PATH%
@@ -306,7 +317,7 @@ jobs:
       working-directory: ${{runner.workspace}}
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\${{ matrix.vcvars }}"
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\${{ matrix.vcvars }}"
         cmake --build output-developer --parallel --config Debug
 
     - name: Upload Inno Setup installer artifact
@@ -333,3 +344,9 @@ jobs:
       with:
         name: teamtalkpro-${{ matrix.portablearch }}
         path: ${{github.workspace}}/Setup/Portable/teamtalkpro-*-${{ matrix.portablearch }}
+
+    - name: Perform CodeQL Analysis
+      if: matrix.arch == 'x64' && !cancelled()
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:csharp"

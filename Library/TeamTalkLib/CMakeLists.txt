@@ -32,7 +32,7 @@ if (MSVC)
     -D_WINSOCK_DEPRECATED_NO_WARNINGS)
 
   # Use for building TeamTalk toolchain
-  set (PLATFORMTOOLSET "/property:PlatformToolset=v143")
+  set (PLATFORMTOOLSET "/property:PlatformToolset=v145")
 
 else()
   set (COMPILE_FLAGS -Wno-deprecated-declarations)
@@ -68,6 +68,12 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
     message(WARNING "No Android API level specified.")
   endif()
 
+endif()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Android")
+  set (DLL_INSTALL_DIR Library/TeamTalk_DLL/${CMAKE_ANDROID_ARCH_ABI})
+else()
+  set (DLL_INSTALL_DIR Library/TeamTalk_DLL)
 endif()
 
 function(set_output_dir target dir)
@@ -177,7 +183,7 @@ if (BUILD_TEAMTALK_LIBRARY_DLL)
   endif()
 
   install (FILES ${CMAKE_CURRENT_LIST_DIR}/../TeamTalk_DLL/TeamTalk.h DESTINATION Library/TeamTalk_DLL)
-  install (TARGETS TeamTalk5DLL DESTINATION Library/TeamTalk_DLL)
+  install (TARGETS TeamTalk5DLL DESTINATION ${DLL_INSTALL_DIR})
 
   if (MSVS_UNITTEST)
     set_target_properties (TeamTalk5DLL PROPERTIES LINK_FLAGS "/LIBPATH:$(VCInstallDir)UnitTest/lib")
@@ -214,7 +220,7 @@ if (BUILD_TEAMTALK_LIBRARY_LIB)
     set_output_dir(TeamTalk5Lib ${TEAMTALK_ROOT}/Library/TeamTalk_DLL)
   endif()
 
-  install (TARGETS TeamTalk5Lib DESTINATION Library/TeamTalk_DLL)
+  install (TARGETS TeamTalk5Lib DESTINATION ${DLL_INSTALL_DIR})
 
 endif()
 
@@ -257,7 +263,7 @@ if (BUILD_TEAMTALK_LIBRARY_DLLPRO)
   endif()
 
   install (FILES ${CMAKE_CURRENT_LIST_DIR}/../TeamTalk_DLL/TeamTalk.h ${CMAKE_CURRENT_LIST_DIR}/../TeamTalk_DLL/TeamTalkSrv.h DESTINATION Library/TeamTalk_DLL)
-  install (TARGETS TeamTalk5ProDLL DESTINATION Library/TeamTalk_DLL)
+  install (TARGETS TeamTalk5ProDLL DESTINATION ${DLL_INSTALL_DIR})
 
   set_target_properties (TeamTalk5ProDLL PROPERTIES OUTPUT_NAME TeamTalk5Pro)
 
@@ -301,7 +307,7 @@ if (BUILD_TEAMTALK_LIBRARY_LIBPRO)
     set_output_dir(TeamTalk5ProLib ${TEAMTALK_ROOT}/Library/TeamTalk_DLL)
   endif()
 
-  install (TARGETS TeamTalk5ProLib DESTINATION Library/TeamTalk_DLL)
+  install (TARGETS TeamTalk5ProLib DESTINATION ${DLL_INSTALL_DIR})
 
   set_target_properties (TeamTalk5ProLib PROPERTIES OUTPUT_NAME TeamTalk5Pro)
 
