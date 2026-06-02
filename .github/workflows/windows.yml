@@ -73,7 +73,6 @@ jobs:
       with:
         python-version: '3.14'
         architecture: ${{ matrix.arch }}
-        cache: 'pip'
 
     - name: Cache Qt
       id: cache-qt
