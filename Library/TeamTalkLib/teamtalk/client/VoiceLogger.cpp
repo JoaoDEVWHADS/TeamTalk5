@@ -221,12 +221,23 @@ void VoiceLog::AddVoicePacket(const teamtalk::AudioPacket& packet)
 void VoiceLog::FlushLog()
 {
     wguard_t g(m_mutex);
+    bool const silent = m_mQueuePackets.empty();
     m_mFlushPackets.insert(m_mQueuePackets.begin(),m_mQueuePackets.end());
     m_mQueuePackets.clear();
 
     g.release();
 
-    m_packet_current = WritePackets(m_packet_current);
+    if (silent && m_packet_current != -1 && !m_closing)
+    {
+        ACE_Time_Value now = ACE_OS::gettimeofday();
+        ACE_Time_Value elapsed = now - m_last;
+        m_last = now;
+        WriteSilence(elapsed.msec());
+    }
+    else
+    {
+        m_packet_current = WritePackets(m_packet_current);
+    }
 }
 
 int VoiceLog::WritePackets(int pktno_cur)
@@ -741,8 +752,6 @@ void VoiceLogger::FlushLogs()
     for(auto & m_mLog : m_mLogs)
     {
         m_mLog.second->FlushLog();
-        if (m_mLog.second->GetVoiceEndTime() < ACE_OS::gettimeofday())
-            closeLogs.push_back(m_mLog.first);
     }
     g.release(); // don't hold lock otherwise lock-order with m_add_mtx can end up wrong
 

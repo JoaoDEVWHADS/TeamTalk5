@@ -25,16 +25,43 @@ jobs:
       with:
         submodules: true
 
+    - name: Cache toolchain and dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ runner.workspace }}/toolchain-install
+          ${{ runner.workspace }}/webrtc
+        key: ${{ runner.os }}-toolchain-${{ hashFiles('**/CMakeLists.txt', 'Build/Makefile') }}
+        restore-keys: |
+          ${{ runner.os }}-toolchain-
+
     - name: Set up Java
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '25'
+        cache: 'gradle'
 
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
         python-version: '3.14'
+        cache: 'pip'
+
+    - name: Set up ccache
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: ${{ runner.os }}-ccache-${{ github.ref }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ github.ref }}-
+          ${{ runner.os }}-ccache-
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.workspace }}/Qt
+        key: ${{ runner.os }}-qt-6.11.1
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -43,6 +70,7 @@ jobs:
         modules: 'qtmultimedia qtspeech'
         setup-python: false
         aqtsource: 'aqtinstall@git+https://github.com/miurahr/aqtinstall.git@master'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Print env
       run: printenv | sort

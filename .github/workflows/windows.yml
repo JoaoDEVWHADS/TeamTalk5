@@ -14,6 +14,7 @@ env:
   VERBOSE: 0
   GITHUBSKIP: 1
   SKIPKNOWNBUGS: 1
+  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
   build:
@@ -49,18 +50,37 @@ jobs:
       with:
         submodules: true
 
+    - name: Cache toolchain and dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ runner.workspace }}/install-toolchain
+          ${{ runner.workspace }}/install-teamtalk
+        key: ${{ runner.os }}-${{ matrix.arch }}-toolchain-${{ hashFiles('**/CMakeLists.txt', 'Build/Makefile') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.arch }}-toolchain-
+
     - name: Set up Java
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '${{ matrix.javaversion }}'
         architecture: ${{ matrix.arch }}
+        cache: 'gradle'
 
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
         python-version: '3.14'
         architecture: ${{ matrix.arch }}
+        cache: 'pip'
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.workspace }}/Qt
+        key: ${{ runner.os }}-qt-${{ matrix.qtversion }}-${{ matrix.qtarch }}
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -70,6 +90,7 @@ jobs:
         modules: '${{ matrix.qtmodules }}'
         setup-python: false
         aqtsource: 'aqtinstall@git+https://github.com/miurahr/aqtinstall.git@master'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Install Doxygen
       uses: ssciwr/doxygen-install@v2
@@ -94,6 +115,7 @@ jobs:
         update: true
         install: base-devel
         release: false
+        cache: true
 
     - name: Install NASM
       working-directory: ${{runner.workspace}}
@@ -119,10 +141,15 @@ jobs:
         languages: csharp
         build-mode: manual
 
+    - name: Set up sccache
+      uses: mozilla-actions/sccache-action@v0.0.8
+
     - name: Configure CMake for toolchain build
       working-directory: ${{runner.workspace}}
       run: >-
         cmake -S TeamTalk5 -B output -A ${{ matrix.cmakeplatform }}
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2=ON
         -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF=OFF
         -DFEATURE_WEBRTC=OFF
@@ -305,6 +332,8 @@ jobs:
       working-directory: ${{runner.workspace}}
       run: >-
         cmake -S TeamTalk5 -B output-developer -A ${{ matrix.cmakeplatform }}
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2=ON
         -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF=OFF
         -DFEATURE_WEBRTC=OFF
