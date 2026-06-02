@@ -1887,6 +1887,7 @@ public abstract class TeamTalkTestCase extends TeamTalkTestCaseBase {
         assertEquals("sample counter matches", ab.uSampleIndex + chan_framesize, ab2.uSampleIndex);
 
         assertTrue("disable local userid", ttclient.enableAudioBlockEvent(Constants.TT_LOCAL_USERID, StreamType.STREAMTYPE_VOICE, null, false));
+        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_AUDIOBLOCK, 50, msg));
         while (ttclient.acquireUserAudioBlock(StreamType.STREAMTYPE_VOICE, Constants.TT_LOCAL_USERID) != null);
 
         // now do same test for TT_MUXED_USERID
