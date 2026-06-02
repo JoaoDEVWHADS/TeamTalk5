@@ -20,7 +20,7 @@ if (MSVC)
 
   if (TOOLCHAIN_BUILD_EXTERNALPROJECTS)
     if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-      set (LIBVPX_WIN_TARGET x86_64-win64-vs18)
+      set (LIBVPX_WIN_TARGET x86_64-win64-vs17)
       configure_file(${CMAKE_CURRENT_LIST_DIR}/build-libvpx-win.bat_sample ${CMAKE_CURRENT_BINARY_DIR}/build-libvpx-win64.bat @ONLY)
 
       ExternalProject_Add(libvpx-src
@@ -41,7 +41,7 @@ if (MSVC)
         DEPENDS           ${NASM_TARGET}
         )
     else()
-      set (LIBVPX_WIN_TARGET x86-win32-vs18)
+      set (LIBVPX_WIN_TARGET x86-win32-vs17)
       configure_file(${CMAKE_CURRENT_LIST_DIR}/build-libvpx-win.bat_sample ${CMAKE_CURRENT_BINARY_DIR}/build-libvpx-win32.bat @ONLY)
 
       ExternalProject_Add(libvpx-src
