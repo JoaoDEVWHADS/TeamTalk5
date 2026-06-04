@@ -2675,12 +2675,13 @@ public abstract class TeamTalkTestCase extends TeamTalkTestCaseBase {
         assertTrue("audio file stopped", waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, DEF_WAIT, msg));
         assertEquals("recording started", MediaFileStatus.MFS_FINISHED, msg.mediafileinfo.nStatus);
 
+        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, msg));
+
         assertTrue("specify audio storage 2", ttclient.setUserMediaStorageDir(ttclient.getMyUserID(),
                                                                             STORAGEFOLDER, "%username%_%counter%",
                                                                             AudioFileFormat.AFF_CHANNELCODEC_FORMAT));
         assertTrue("enable voice tx 2 ", ttclient.enableVoiceTransmission(true));
 
-        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, msg));
         assertTrue("audio file created 2", waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, DEF_WAIT, msg));
 
         assertEquals("recording started 2", MediaFileStatus.MFS_STARTED, msg.mediafileinfo.nStatus);
@@ -2713,12 +2714,13 @@ public abstract class TeamTalkTestCase extends TeamTalkTestCaseBase {
 
         assertTrue("join speex channel", waitCmdSuccess(ttclient, ttclient.doJoinChannel(chan), DEF_WAIT));
 
+        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, msg));
+
         assertTrue("specify audio storage 3", ttclient.setUserMediaStorageDir(ttclient.getMyUserID(),
                                                                             STORAGEFOLDER, "%username%_%counter%",
                                                                             AudioFileFormat.AFF_CHANNELCODEC_FORMAT));
         assertTrue("enable voice tx 3", ttclient.enableVoiceTransmission(true));
 
-        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, msg));
         assertTrue("audio file created 3", waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, DEF_WAIT, msg));
 
         assertEquals("recording started 3", MediaFileStatus.MFS_STARTED, msg.mediafileinfo.nStatus);
@@ -2735,12 +2737,13 @@ public abstract class TeamTalkTestCase extends TeamTalkTestCaseBase {
         assertEquals("recording started 3", MediaFileStatus.MFS_FINISHED, msg.mediafileinfo.nStatus);
 
 
+        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, msg));
+
         assertTrue("specify audio storage 4", ttclient.setUserMediaStorageDir(ttclient.getMyUserID(),
                                                                             STORAGEFOLDER, "%username%_%counter%",
                                                                             AudioFileFormat.AFF_CHANNELCODEC_FORMAT));
         assertTrue("enable voice tx 4", ttclient.enableVoiceTransmission(true));
 
-        while (waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, msg));
         assertTrue("audio file created 4", waitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, DEF_WAIT, msg));
 
         assertEquals("recording started 4", MediaFileStatus.MFS_STARTED, msg.mediafileinfo.nStatus);
