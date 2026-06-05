@@ -15,7 +15,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Init Toolchain submodule
-      run: git submodule update --init Library/TeamTalkLib/toolchain
+      run: |
+        git config --global --unset-all http.https://github.com/.extraheader
+        git submodule update --init Library/TeamTalkLib/toolchain
 
     - name: Build ARM64 SDK (.so)
       uses: uraimo/run-on-arch-action@v3
