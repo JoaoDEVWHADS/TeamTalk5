@@ -4523,7 +4523,7 @@ int ClientNode::DoFileSend(int channelid, const ACE_TString& localfilepath)
     ACE_TString filename = localfilepath;
     size_t index = localfilepath.rfind(ACE_DIRECTORY_SEPARATOR_CHAR);
     if(index != ACE_TString::npos)
-        filename = filename.substr(index+1);
+        filename = filename.substr(index+1, filename.length() - index - 1);
 
     FileTransfer transfer;
     transfer.channelid = channelid;
