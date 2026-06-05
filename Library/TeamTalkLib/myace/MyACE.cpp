@@ -27,6 +27,7 @@
 #include <ace/UTF16_Encoding_Converter.h>
 #include <ace/OS_NS_ctype.h>
 #include <ace/Version.h>
+#include <ace/Auto_Ptr.h>
 
 #include <ace/INet/HTTP_URL.h>
 #include <ace/INet/HTTP_ClientRequestHandler.h>
