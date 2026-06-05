@@ -14,11 +14,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Init Toolchain submodule
-      run: |
-        git config --global --unset-all http.https://github.com/.extraheader
-        git submodule update --init Library/TeamTalkLib/toolchain
-
     - name: Build ARM64 SDK (.so)
       uses: uraimo/run-on-arch-action@v3
       with:
@@ -26,13 +21,11 @@ jobs:
         distro: ubuntu24.04
         githubToken: ${{ github.token }}
         
-        # Install build dependencies for TeamTalk 5
+        # Install build dependencies for TeamTalk 5 (using system libraries instead of toolchain)
         install: |
           apt-get update
           apt-get install -y \
-            autoconf \
             cmake \
-            doxygen \
             g++ \
             git \
             libasound2-dev \
@@ -43,26 +36,22 @@ jobs:
             libssl-dev \
             libtool \
             libxss-dev \
-            nasm \
             ninja-build \
             pkg-config \
-            wget \
-            xz-utils
+            libopus-dev \
+            libspeex-dev \
+            libspeexdsp-dev \
+            libvpx-dev \
+            libace-dev \
+            libtinyxml-dev \
+            libogg-dev \
+            zlib1g-dev
 
-        # Build toolchain libraries and compile libTeamTalk5.so
+        # Compile libTeamTalk5.so using system shared libraries
         run: |
-          # 1. Initialize and prepare the TeamTalk Lib toolchain
-          cd Library/TeamTalkLib/toolchain/build
-          make prepare-github
-          
-          # 2. Compile the toolchain libraries (speex, opus, openssl, ace, etc.)
-          source ../toolchain.sh linux
-          make deb64
-          
-          # 3. Build only the libTeamTalk5.so SDK (disabling servers and clients)
           cd /github/workspace
           source env.sh
-          make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_SERVERS=OFF -DBUILD_TEAMTALK_SERVER_SRVEXE=OFF -DBUILD_TEAMTALK_SERVER_SRVEXEPRO=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=ON -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64
+          make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=OFF -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DBUILD_TEAMTALK_SERVERS=OFF -DBUILD_TEAMTALK_SERVER_SRVEXE=OFF -DBUILD_TEAMTALK_SERVER_SRVEXEPRO=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=ON -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64
 
     - name: Upload libTeamTalk5.so Artifact
       uses: actions/upload-artifact@v4
