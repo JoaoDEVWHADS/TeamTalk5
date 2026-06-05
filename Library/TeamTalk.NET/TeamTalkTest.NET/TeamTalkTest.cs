@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2005-2018, BearWare.dk
  * 
  * Contact Information:
@@ -393,6 +393,8 @@ namespace TeamTalkTest.NET
 
             User user = (User)msg.DataToObject();
             Assert.IsTrue(user.uUserState.HasFlag(UserState.USERSTATE_VOICE), "user state has voice");
+
+            while (WaitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, ref msg)) ;
 
             Assert.IsTrue(ttclient.SetUserMediaStorageDir(ttclient.GetMyUserID(), MEDIAFOLDER, "", AudioFileFormat.AFF_WAVE_FORMAT),
                           "Record user audio files");
@@ -2653,6 +2655,8 @@ namespace TeamTalkTest.NET
             User myself = new User();
             Assert.IsTrue(ttclient.GetUser(ttclient.UserID, ref myself));
             Assert.IsTrue(WaitCmdSuccess(ttclient, ttclient.DoSubscribe(ttclient.UserID, Subscription.SUBSCRIBE_VOICE), DEF_WAIT));
+
+            while (WaitForEvent(ttclient, ClientEvent.CLIENTEVENT_USER_RECORD_MEDIAFILE, 50, ref msg)) ;
 
             Assert.IsTrue(ttclient.SetUserMediaStorageDir(ttclient.GetMyUserID(), MEDIAFOLDER, "", AudioFileFormat.AFF_WAVE_FORMAT),
                           "Record user audio files");
