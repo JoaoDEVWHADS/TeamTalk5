@@ -23,6 +23,13 @@ else()
   # Ubuntu: libavcodec-dev libavdevice-dev libavfilter-dev libavformat-dev libavresample-dev libavutil-dev libswresample-dev libswscale-dev
 
   find_path(FFMPEG_INCLUDE_DIR NAMES libavfilter/avfiltergraph.h HINTS /usr/include/aarch64-linux-gnu /usr/include)
+  if (NOT FFMPEG_INCLUDE_DIR)
+    if (EXISTS "/usr/include/aarch64-linux-gnu/libavfilter/avfiltergraph.h")
+      set(FFMPEG_INCLUDE_DIR "/usr/include/aarch64-linux-gnu")
+    else()
+      set(FFMPEG_INCLUDE_DIR "/usr/include")
+    endif()
+  endif()
 
   find_library(AVDEVICE_LIBRARY avdevice)
   list (APPEND FFMPEG_LINK_FLAGS ${AVDEVICE_LIBRARY})
