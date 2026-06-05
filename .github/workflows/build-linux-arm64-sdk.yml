@@ -13,8 +13,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        submodules: recursive
+
+    - name: Init Toolchain submodule
+      run: git submodule update --init Library/TeamTalkLib/toolchain
 
     - name: Build ARM64 SDK (.so)
       uses: uraimo/run-on-arch-action@v3
