@@ -59,9 +59,15 @@ jobs:
 
         run: |
           cd "$GITHUB_WORKSPACE"
+          mkdir -p sys_libs/ACE/lib
+          ln -s /usr/lib/aarch64-linux-gnu/libACE.a sys_libs/ACE/lib/libACE.a
+          ln -s /usr/lib/aarch64-linux-gnu/libACE_INet.a sys_libs/ACE/lib/libACE_INet.a
+          ln -s /usr/lib/aarch64-linux-gnu/libACE_SSL.a sys_libs/ACE/lib/libACE_SSL.a
+          ln -s /usr/lib/aarch64-linux-gnu/libACE_INet_SSL.a sys_libs/ACE/lib/libACE_INet_SSL.a
+          ln -s /usr/include sys_libs/ACE/include
           export PYTHONPATH=""
           source env.sh
-          make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=OFF -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF -DACE_LIBRARY=/usr/lib/aarch64-linux-gnu/libACE.a -DACEINET_LIBRARY=/usr/lib/aarch64-linux-gnu/libACE_INet.a -DACESSL_LIBRARY=/usr/lib/aarch64-linux-gnu/libACE_SSL.a -DACEINETSSL_LIBRARY=/usr/lib/aarch64-linux-gnu/libACE_INet_SSL.a" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+          make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=ON -DTTLIBS_ROOT=$GITHUB_WORKSPACE/sys_libs -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
 
     - name: Upload libTeamTalk5.so Artifact
       uses: actions/upload-artifact@v4
