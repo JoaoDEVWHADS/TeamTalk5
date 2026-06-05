@@ -22,7 +22,7 @@ if (FFMPEG_STATIC)
 else()
   # Ubuntu: libavcodec-dev libavdevice-dev libavfilter-dev libavformat-dev libavresample-dev libavutil-dev libswresample-dev libswscale-dev
 
-  find_path(FFMPEG_INCLUDE_DIR NAMES libavfilter/avfiltergraph.h)
+  find_path(FFMPEG_INCLUDE_DIR NAMES libavfilter/avfiltergraph.h HINTS /usr/include/aarch64-linux-gnu /usr/include)
 
   find_library(AVDEVICE_LIBRARY avdevice)
   list (APPEND FFMPEG_LINK_FLAGS ${AVDEVICE_LIBRARY})
