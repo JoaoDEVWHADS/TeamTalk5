@@ -22,9 +22,9 @@ if (FFMPEG_STATIC)
 else()
   # Ubuntu: libavcodec-dev libavdevice-dev libavfilter-dev libavformat-dev libavresample-dev libavutil-dev libswresample-dev libswscale-dev
 
-  find_path(FFMPEG_INCLUDE_DIR NAMES libavfilter/avfiltergraph.h HINTS /usr/include/aarch64-linux-gnu /usr/include)
+  find_path(FFMPEG_INCLUDE_DIR NAMES libavfilter/avfilter.h HINTS /usr/include/aarch64-linux-gnu /usr/include)
   if (NOT FFMPEG_INCLUDE_DIR)
-    if (EXISTS "/usr/include/aarch64-linux-gnu/libavfilter/avfiltergraph.h")
+    if (EXISTS "/usr/include/aarch64-linux-gnu/libavfilter/avfilter.h")
       set(FFMPEG_INCLUDE_DIR "/usr/include/aarch64-linux-gnu")
     else()
       set(FFMPEG_INCLUDE_DIR "/usr/include")
