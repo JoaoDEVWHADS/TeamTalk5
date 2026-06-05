@@ -1,0 +1,68 @@
+name: Build Linux ARM64 SDK (v5.8.1)
+
+on:
+  push:
+    branches: [ "v5.8.1-custom" ]
+  pull_request:
+    branches: [ "v5.8.1-custom" ]
+  workflow_dispatch:
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build ARM64 SDK (.so)
+      uses: uraimo/run-on-arch-action@v3
+      with:
+        arch: aarch64
+        distro: ubuntu24.04
+        githubToken: ${{ github.token }}
+        
+        # Install build dependencies for TeamTalk 5
+        install: |
+          apt-get update
+          apt-get install -y \
+            autoconf \
+            cmake \
+            doxygen \
+            g++ \
+            git \
+            libasound2-dev \
+            libglib2.0-dev \
+            libpcap-dev \
+            libpulse-dev \
+            libspeechd-dev \
+            libssl-dev \
+            libtool \
+            libxss-dev \
+            nasm \
+            ninja-build \
+            pkg-config \
+            wget \
+            xz-utils
+
+        # Build toolchain libraries and compile libTeamTalk5.so
+        run: |
+          # 1. Initialize and prepare the TeamTalk Lib toolchain
+          cd Library/TeamTalkLib/toolchain/build
+          make prepare-github
+          
+          # 2. Compile the toolchain libraries (speex, opus, openssl, ace, etc.)
+          source ../toolchain.sh linux
+          make deb64
+          
+          # 3. Build only the libTeamTalk5.so SDK (disabling servers and clients)
+          cd /github/workspace
+          source env.sh
+          make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_SERVERS=OFF -DBUILD_TEAMTALK_SERVER_SRVEXE=OFF -DBUILD_TEAMTALK_SERVER_SRVEXEPRO=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=ON -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64
+
+    - name: Upload libTeamTalk5.so Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: libTeamTalk5-linux-arm64
+        path: Library/TeamTalk_DLL/libTeamTalk5.so
