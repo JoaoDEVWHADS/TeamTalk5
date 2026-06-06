@@ -1,6 +1,7 @@
 project(Toolchain)
 
 include(ExternalProject)
+include(FeatureSummary)
 
 set (TOOLCHAIN_BUILD_PREFIX build CACHE FILEPATH "Specify alternative 'clone' directory to build all toolchain dependencies. Default: CMAKE_CURRENT_BINARY_DIR/build")
 set (TOOLCHAIN_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR} CACHE FILEPATH "Install path for TeamTalk toolchain. Default: CMAKE_CURRENT_SOURCE_DIR")
