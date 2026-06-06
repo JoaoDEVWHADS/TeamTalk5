@@ -14,14 +14,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Cache static ACE and dependencies
+    - name: Restore static ACE and dependencies cache
       id: cache-dependencies
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       with:
         path: ${{ github.workspace }}/ttlibs
         key: ${{ runner.os }}-static-libs-v5-arm64
 
-    - name: Build inside Ubuntu 20.04 Container
+    - name: Build Dependencies (ACE & WebRTC)
       run: |
         docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:20.04 bash -c "
           apt-get update && \
@@ -166,7 +166,48 @@ jobs:
             rm -rf /tmp/webrtc-fetch /tmp/depot-tools ; \
           else \
             echo '=== Cache hit: Using cached static WebRTC ===' ; \
-          fi && \
+          fi
+        "
+
+    - name: Save static ACE and dependencies cache
+      uses: actions/cache/save@v4
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      with:
+        path: ${{ github.workspace }}/ttlibs
+        key: ${{ runner.os }}-static-libs-v5-arm64
+
+    - name: Build TeamTalk 5
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:20.04 bash -c "
+          apt-get update && \
+          DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common && \
+          add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+          apt-get update && \
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            cmake \
+            g++-11 \
+            gcc-11 \
+            libasound2-dev \
+            libglib2.0-dev \
+            libpcap-dev \
+            libpulse-dev \
+            libspeechd-dev \
+            libssl-dev \
+            libxss-dev \
+            pkg-config \
+            libavcodec-dev \
+            libavdevice-dev \
+            libavfilter-dev \
+            libavformat-dev \
+            libavutil-dev \
+            libswresample-dev \
+            libswscale-dev && \
+          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 && \
+          rm -f /usr/bin/aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-gnu-g++ && \
+          ln -sf /usr/bin/gcc-11 /usr/bin/aarch64-linux-gnu-gcc && \
+          ln -sf /usr/bin/g++-11 /usr/bin/aarch64-linux-gnu-g++ && \
+          export CC=gcc-11 && \
+          export CXX=g++-11 && \
           
           # 3. Build TeamTalk 5
           echo '=== Building TeamTalk 5 ===' && \
