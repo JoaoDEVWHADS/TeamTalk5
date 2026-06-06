@@ -25,6 +25,9 @@ jobs:
       run: |
         docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:20.04 bash -c "
           apt-get update && \
+          DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common && \
+          add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+          apt-get update && \
           DEBIAN_FRONTEND=noninteractive apt-get install -y \
             cmake \
             g++-11 \
