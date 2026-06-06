@@ -13,6 +13,10 @@ jobs:
     container:
       image: ubuntu:20.04
     steps:
+    - name: Install git inside container
+      run: |
+        apt-get update
+        apt-get install -y git
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
