@@ -42,6 +42,7 @@ jobs:
         export PYTHONPATH=""
         cmake -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_TEAMTALK_CORE=ON \
           -DTOOLCHAIN_BUILD_EXTERNALPROJECTS=ON \
           -DWEBRTC=OFF \
           -DFEATURE_WEBRTC=OFF \
