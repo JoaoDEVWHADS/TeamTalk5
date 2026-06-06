@@ -9,92 +9,86 @@ on:
 
 jobs:
   build-arm64:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm64
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Build ARM64 SDK (.so)
-      uses: uraimo/run-on-arch-action@v3
-      with:
-        arch: aarch64
-        distro: ubuntu20.04
-        githubToken: ${{ github.token }}
-        
-        # Install build dependencies for TeamTalk 5 (using system libraries instead of toolchain)
-        install: |
-          apt-get update
-          apt-get install -y \
-            cmake \
-            g++ \
-            git \
-            libasound2-dev \
-            libglib2.0-dev \
-            libpcap-dev \
-            libpulse-dev \
-            libspeechd-dev \
-            libssl-dev \
-            libtool \
-            libxss-dev \
-            ninja-build \
-            pkg-config \
-            libopus-dev \
-            libspeex-dev \
-            libspeexdsp-dev \
-            libvpx-dev \
-            libace-dev \
-            libace-inet-dev \
-            libace-inet-ssl-dev \
-            libtinyxml-dev \
-            libogg-dev \
-            zlib1g-dev \
-            portaudio19-dev \
-            libavcodec-dev \
-            libavdevice-dev \
-            libavfilter-dev \
-            libavformat-dev \
-            libavutil-dev \
-            libswresample-dev \
-            libswscale-dev
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake \
+          g++ \
+          git \
+          libasound2-dev \
+          libglib2.0-dev \
+          libpcap-dev \
+          libpulse-dev \
+          libspeechd-dev \
+          libssl-dev \
+          libtool \
+          libxss-dev \
+          ninja-build \
+          pkg-config \
+          libopus-dev \
+          libspeex-dev \
+          libspeexdsp-dev \
+          libvpx-dev \
+          libace-dev \
+          libace-inet-dev \
+          libace-inet-ssl-dev \
+          libtinyxml-dev \
+          libogg-dev \
+          zlib1g-dev \
+          portaudio19-dev \
+          libavcodec-dev \
+          libavdevice-dev \
+          libavfilter-dev \
+          libavformat-dev \
+          libavutil-dev \
+          libswresample-dev \
+          libswscale-dev
 
-        run: |
-          # 1. Download and extract ACE 6.5.12
-          echo "=== Downloading and building static ACE ==="
-          cd /tmp
-          wget -q https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_12/ACE-6.5.12.tar.gz
-          tar -xf ACE-6.5.12.tar.gz
-          cd ACE_wrappers
-          export ACE_ROOT=$(pwd)
-          
-          # Configure ACE for static build on Linux
-          echo '#include "ace/config-linux.h"' > ace/config.h
-          echo 'include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU' > include/makeinclude/platform_macros.GNU
-          echo 'shared_libs = 0' >> include/makeinclude/platform_macros.GNU
-          echo 'static_libs = 1' >> include/makeinclude/platform_macros.GNU
-          
-          # Build only the components we need
-          cd ace
-          make -j$(nproc)
-          cd ../protocols/ace/SSL
-          make -j$(nproc)
-          cd ../INet
-          make -j$(nproc)
-          cd ../INet/SSL
-          make -j$(nproc)
-          
-          # Create the TTLIBS structure
-          mkdir -p /tmp/ttlibs/ACE/lib
-          mkdir -p /tmp/ttlibs/ACE/include
-          cp -r $ACE_ROOT/ace /tmp/ttlibs/ACE/include/
-          cp -r $ACE_ROOT/protocols /tmp/ttlibs/ACE/include/
-          cp $ACE_ROOT/lib/*.a /tmp/ttlibs/ACE/lib/
-          
-          # 2. Build TeamTalk 5
-          echo "=== Building TeamTalk 5 ==="
-          cd "$GITHUB_WORKSPACE"
-          export PYTHONPATH=""
-          source env.sh
-          make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=ON -DTTLIBS_ROOT=/tmp/ttlibs -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+    - name: Build ARM64 SDK (.so)
+      run: |
+        # 1. Download and extract ACE 6.5.12
+        echo "=== Downloading and building static ACE ==="
+        cd /tmp
+        wget -q https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_12/ACE-6.5.12.tar.gz
+        tar -xf ACE-6.5.12.tar.gz
+        cd ACE_wrappers
+        export ACE_ROOT=$(pwd)
+        
+        # Configure ACE for static build on Linux
+        echo '#include "ace/config-linux.h"' > ace/config.h
+        echo 'include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU' > include/makeinclude/platform_macros.GNU
+        echo 'shared_libs = 0' >> include/makeinclude/platform_macros.GNU
+        echo 'static_libs = 1' >> include/makeinclude/platform_macros.GNU
+        
+        # Build only the components we need
+        cd ace
+        make -j$(nproc)
+        cd ../protocols/ace/SSL
+        make -j$(nproc)
+        cd ../INet
+        make -j$(nproc)
+        cd ../INet/SSL
+        make -j$(nproc)
+        
+        # Create the TTLIBS structure
+        mkdir -p /tmp/ttlibs/ACE/lib
+        mkdir -p /tmp/ttlibs/ACE/include
+        cp -r $ACE_ROOT/ace /tmp/ttlibs/ACE/include/
+        cp -r $ACE_ROOT/protocols /tmp/ttlibs/ACE/include/
+        cp $ACE_ROOT/lib/*.a /tmp/ttlibs/ACE/lib/
+        
+        # 2. Build TeamTalk 5
+        echo "=== Building TeamTalk 5 ==="
+        cd "$GITHUB_WORKSPACE"
+        export PYTHONPATH=""
+        source env.sh
+        make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=ON -DTTLIBS_ROOT=/tmp/ttlibs -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
 
     - name: Upload libTeamTalk5.so Artifact
       uses: actions/upload-artifact@v4
