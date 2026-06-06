@@ -60,6 +60,7 @@ jobs:
             libswresample-dev \
             libswscale-dev && \
           update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 && \
+          rm -f /usr/bin/aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-gnu-g++ /usr/bin/aarch64-linux-gnu-ar /usr/bin/aarch64-linux-gnu-nm && \
           ln -sf /usr/bin/gcc-10 /usr/bin/aarch64-linux-gnu-gcc && \
           ln -sf /usr/bin/g++-10 /usr/bin/aarch64-linux-gnu-g++ && \
           ln -sf /usr/bin/ar /usr/bin/aarch64-linux-gnu-ar && \
