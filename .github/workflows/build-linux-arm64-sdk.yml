@@ -136,7 +136,7 @@ jobs:
             cd /tmp/webrtc-fetch && \
             git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git /tmp/depot-tools && \
             export PATH=\$PATH:/tmp/depot-tools && \
-            export DEPOT_TOOLS_UPDATE=0 && \
+            gclient --version && \
             fetch --nohooks webrtc && \
             cd src && \
             git checkout branch-heads/7778 && \
