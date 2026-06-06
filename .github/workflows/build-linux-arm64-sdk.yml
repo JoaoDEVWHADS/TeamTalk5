@@ -19,7 +19,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-static-libs-v5-arm64
+        key: ${{ runner.os }}-static-libs-v6-arm64
 
     - name: Build Dependencies (ACE & WebRTC)
       run: |
@@ -94,7 +94,7 @@ jobs:
             mkdir -p /workspace/ttlibs/ACE/lib && \
             mkdir -p /workspace/ttlibs/ACE/include && \
             cp -r \$ACE_ROOT/ace /workspace/ttlibs/ACE/include/ && \
-            cp -r \$ACE_ROOT/protocols /workspace/ttlibs/ACE/include/ && \
+            cp -r \$ACE_ROOT/protocols/ace/* /workspace/ttlibs/ACE/include/ace/ && \
             cp \$ACE_ROOT/lib/*.a /workspace/ttlibs/ACE/lib/ && \
             
             # Copy other system static libraries and headers into TTLIBS structure
@@ -174,7 +174,7 @@ jobs:
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-static-libs-v5-arm64
+        key: ${{ runner.os }}-static-libs-v6-arm64
 
     - name: Build TeamTalk 5
       run: |
