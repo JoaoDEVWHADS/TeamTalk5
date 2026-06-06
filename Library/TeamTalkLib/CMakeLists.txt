@@ -20,11 +20,11 @@ else()
 endif()
 
 if (${CMAKE_VERSION} VERSION_GREATER "3.1")
-  # WebRTC makes use of std::make_reverse_iterator which is C++14 (Abseil needs C++17 for non-const string::data())
-  set (CMAKE_CXX_STANDARD 17)
+  # WebRTC API headers make use of std::span which requires C++20
+  set (CMAKE_CXX_STANDARD 20)
 else()
   if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    list (APPEND COMPILE_FLAGS -std=c++17)
+    list (APPEND COMPILE_FLAGS -std=c++20)
   endif()
 endif()
 
