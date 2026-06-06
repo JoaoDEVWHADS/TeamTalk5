@@ -158,6 +158,13 @@ bool VersionSameOrLater(const ACE_TString& check, const ACE_TString& against);
 #define W8_LEQ(a,b) ((ACE_INT8)((a)-(b)) <= 0)
 #define W8_LT(a,b)  ((ACE_INT8)((a)-(b)) < 0)
 
+#ifndef ACE_MAX
+#define ACE_MAX(a,b) ((a)>(b)?(a):(b))
+#endif
+#ifndef ACE_MIN
+#define ACE_MIN(a,b) ((a)<(b)?(a):(b))
+#endif
+
 struct w32_less_comp
 {
     bool operator() (const ACE_UINT32& a, const ACE_UINT32& b) const
