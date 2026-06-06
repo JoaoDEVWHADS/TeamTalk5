@@ -27,8 +27,8 @@ jobs:
           apt-get update && \
           DEBIAN_FRONTEND=noninteractive apt-get install -y \
             cmake \
-            g++-10 \
-            gcc-10 \
+            g++-11 \
+            gcc-11 \
             git \
             wget \
             libasound2-dev \
@@ -59,12 +59,12 @@ jobs:
             libavutil-dev \
             libswresample-dev \
             libswscale-dev && \
-          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 && \
+          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 && \
           rm -f /usr/bin/aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-gnu-g++ && \
-          ln -sf /usr/bin/gcc-10 /usr/bin/aarch64-linux-gnu-gcc && \
-          ln -sf /usr/bin/g++-10 /usr/bin/aarch64-linux-gnu-g++ && \
-          export CC=gcc-10 && \
-          export CXX=g++-10 && \
+          ln -sf /usr/bin/gcc-11 /usr/bin/aarch64-linux-gnu-gcc && \
+          ln -sf /usr/bin/g++-11 /usr/bin/aarch64-linux-gnu-g++ && \
+          export CC=gcc-11 && \
+          export CXX=g++-11 && \
           
           # 1. Download and extract ACE 6.5.12 if not cached
           if [ ! -d \"/workspace/ttlibs/ACE/lib\" ]; then \
