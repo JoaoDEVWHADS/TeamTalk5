@@ -23,6 +23,11 @@
 
 #include "AudioThread.h"
 
+#if defined(ENABLE_WEBRTC)
+#include <api/audio/builtin_audio_processing_builder.h>
+#include <api/environment/environment_factory.h>
+#endif
+
 #include <myace/MyACE.h>
 #include <teamtalk/ttassert.h>
 #include <teamtalk/CodecCommon.h>
@@ -273,7 +278,7 @@ bool AudioThread::UpdatePreprocessor(const teamtalk::AudioPreprocessor& preproce
         }
 
         if (!m_apm)
-            m_apm.reset(webrtc::AudioProcessingBuilder().Create());
+            m_apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
         m_apm->ApplyConfig(preprocess.webrtc);
         if (m_apm->Initialize() != webrtc::AudioProcessing::kNoError)
         {
@@ -433,7 +438,7 @@ bool AudioThread::IsVoiceActive()
 #if defined(ENABLE_WEBRTC)
     std::unique_lock<std::recursive_mutex> g(m_preprocess_lock);
 
-    if (m_apm && m_apm->GetConfig().voice_detection.enabled)
+    if (m_apm)
     {
         assert(m_aps);
         return m_aps->voice_detected.value_or(false) ||
@@ -446,23 +451,6 @@ bool AudioThread::IsVoiceActive()
 
 int AudioThread::GetCurrentVoiceLevel()
 {
-#if defined(ENABLE_WEBRTC)
-    std::unique_lock<std::recursive_mutex> g(m_preprocess_lock);
-
-    if (m_apm)
-    {
-        assert(m_aps);
-        auto cfg = m_apm->GetConfig();
-        if (cfg.level_estimation.enabled)
-        {
-            // WebRTC's maximum value for dB from digital full scale
-            float value = 127.f - m_aps->output_rms_dbfs.value_or(0);
-            value /= 127.f;
-            return int(VU_METER_MAX * value);
-        }
-    }
-#endif
-
     return m_voicelevel;
 }
 
@@ -699,7 +687,7 @@ void AudioThread::PreprocessWebRTC(media::AudioFrame& audblock, bool& vad)
         MYTRACE(ACE_TEXT("WebRTC failed to process audio\n"));
     }
 
-    vad = m_apm->GetConfig().voice_detection.enabled;
+    vad = false;
     if (vad)
     {
         assert(m_aps);

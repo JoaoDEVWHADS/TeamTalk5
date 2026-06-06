@@ -1,7 +1,11 @@
 #include <catch.hpp>
 #include <iostream>
+#include <cmath>
 #include <codec/MediaUtil.h>
 #include <codec/WaveFile.h>
+
+#include <api/audio/builtin_audio_processing_builder.h>
+#include <api/environment/environment_factory.h>
 
 #include <modules/audio_processing/audio_buffer.h>
 #include <modules/audio_processing/ns/noise_suppressor.h>
@@ -121,7 +125,7 @@ TEST_CASE("webrtc-apm")
 
     std::vector<int16_t> in_buff(af.channels * in_cfg.num_frames()), apm_buff(af.channels * out_cfg.num_frames());
 
-    std::unique_ptr<webrtc::AudioProcessing> apm(webrtc::AudioProcessingBuilder().Create());
+    std::unique_ptr<webrtc::AudioProcessing> apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
 
     // first try gain_controller1
 
@@ -176,7 +180,7 @@ TEST_CASE("webrtc-double-gain")
 
     std::vector<int16_t> in_buff(af.channels * in_cfg.num_frames()), apm_buff(af.channels * out_cfg.num_frames());
 
-    std::unique_ptr<webrtc::AudioProcessing> apm(webrtc::AudioProcessingBuilder().Create());
+    std::unique_ptr<webrtc::AudioProcessing> apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
 
     webrtc::AudioProcessing::Config apm_cfg;
     rawfile.Close();
@@ -185,8 +189,6 @@ TEST_CASE("webrtc-double-gain")
     apm_cfg = webrtc::AudioProcessing::Config();
     apm_cfg.gain_controller2.enabled = true;
     apm_cfg.gain_controller2.fixed_digital.gain_db = 10;
-    apm_cfg.level_estimation.enabled = true;
-    apm_cfg.voice_detection.enabled = true;
     apm->ApplyConfig(apm_cfg);
     REQUIRE(apm->Initialize() == webrtc::AudioProcessing::kNoError);
 
@@ -196,14 +198,16 @@ TEST_CASE("webrtc-double-gain")
         REQUIRE(apm->ProcessStream(&in_buff[0], in_cfg, out_cfg, &apm_buff[0])
             == webrtc::AudioProcessing::kNoError);
 
-        sum += apm->GetStatistics().output_rms_dbfs.value_or(0);
+        double s = 0;
+        for (short x : apm_buff) s += x * x;
+        sum += (int)sqrt(s / (apm_buff.size() ? apm_buff.size() : 1));
         n++;
         REQUIRE(apmfile_gain1.AppendSamples(&apm_buff[0], out_cfg.num_frames()));
     }
     apmfile_gain1.Close();
     REQUIRE(apmfile_gain1.OpenFile(ACE_TEXT("apmfile_gain1.wav"), true));
     
-    std::cout << "Gain1 AVG dB FS: " << sum / n << std::endl;
+    std::cout << "Gain1 AVG dB FS: " << sum / (n ? n : 1) << std::endl;
 
     REQUIRE(apm->Initialize() == webrtc::AudioProcessing::kNoError);
 
@@ -213,7 +217,9 @@ TEST_CASE("webrtc-double-gain")
         REQUIRE(apm->ProcessStream(&in_buff[0], in_cfg, out_cfg, &apm_buff[0])
             == webrtc::AudioProcessing::kNoError);
 
-        sum += apm->GetStatistics().output_rms_dbfs.value_or(0);
+        double s = 0;
+        for (short x : apm_buff) s += x * x;
+        sum += (int)sqrt(s / (apm_buff.size() ? apm_buff.size() : 1));
         n++;
 
         REQUIRE(apmfile_gain2.AppendSamples(&apm_buff[0], out_cfg.num_frames()));

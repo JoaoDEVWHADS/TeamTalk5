@@ -22,6 +22,10 @@
  */
 
 #include "SoundLoopback.h"
+#if defined(ENABLE_WEBRTC)
+#include <api/audio/builtin_audio_processing_builder.h>
+#include <api/environment/environment_factory.h>
+#endif
 #include <codec/MediaUtil.h>
 #include <assert.h>
 #include <cstring>
@@ -120,7 +124,7 @@ bool SoundLoopback::StartTest(int inputdevid, int outputdevid,
 #if defined(ENABLE_WEBRTC)
     if (IsEnabled(apm_cfg))
     {
-        m_apm.reset(webrtc::AudioProcessingBuilder().Create());
+        m_apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
         if (!m_apm)
         {
             StopTest();
@@ -214,7 +218,7 @@ bool SoundLoopback::StartDuplexTest(int inputdevid, int outputdevid,
 #if defined(ENABLE_WEBRTC)
     if (IsEnabled(apm_cfg))
     {
-        m_apm.reset(webrtc::AudioProcessingBuilder().Create());
+        m_apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
         if (!m_apm)
         {
             StopTest();
