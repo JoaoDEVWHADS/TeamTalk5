@@ -11,7 +11,7 @@ jobs:
   build-x86_64:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:20.04
+      image: ubuntu:22.04
     steps:
     - name: Install git inside container
       run: |
@@ -28,8 +28,8 @@ jobs:
         apt-get update
         DEBIAN_FRONTEND=noninteractive apt-get install -y \
           cmake \
-          g++-10 \
-          gcc-10 \
+          g++-12 \
+          gcc-12 \
           git \
           make \
           ninja-build \
@@ -47,7 +47,7 @@ jobs:
           nasm \
           curl \
           wget
-        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 --slave /usr/bin/g++ g++ /usr/bin/g++-12
 
     - name: Build x86_64 SDK (.so)
       run: |

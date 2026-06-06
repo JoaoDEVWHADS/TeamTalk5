@@ -11,7 +11,7 @@ jobs:
   build-arm64:
     runs-on: ubuntu-24.04-arm
     container:
-      image: ubuntu:20.04
+      image: ubuntu:22.04
     steps:
     - name: Install git inside container
       run: |
@@ -28,8 +28,8 @@ jobs:
         apt-get update
         DEBIAN_FRONTEND=noninteractive apt-get install -y \
           cmake \
-          g++-10 \
-          gcc-10 \
+          g++-12 \
+          gcc-12 \
           git \
           make \
           ninja-build \
@@ -47,10 +47,10 @@ jobs:
           nasm \
           curl \
           wget
-        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
-        # Link aarch64-linux-gnu-g++ to g++-10 since the build runs natively on ARM64 and WebRTC expects this binary
-        ln -sf /usr/bin/gcc-10 /usr/bin/aarch64-linux-gnu-gcc
-        ln -sf /usr/bin/g++-10 /usr/bin/aarch64-linux-gnu-g++
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 --slave /usr/bin/g++ g++ /usr/bin/g++-12
+        # Link aarch64-linux-gnu-g++ to g++-12 since the build runs natively on ARM64 and WebRTC expects this binary
+        ln -sf /usr/bin/gcc-12 /usr/bin/aarch64-linux-gnu-gcc
+        ln -sf /usr/bin/g++-12 /usr/bin/aarch64-linux-gnu-g++
 
     - name: Build ARM64 SDK (.so)
       run: |
