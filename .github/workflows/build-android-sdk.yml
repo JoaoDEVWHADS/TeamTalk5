@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake ninja-build make perl
+        sudo apt-get install -y cmake ninja-build make perl curl wget
 
     - name: Build Android SDK for ${{ matrix.abi }}
       run: |

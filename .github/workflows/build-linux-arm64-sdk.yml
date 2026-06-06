@@ -44,7 +44,9 @@ jobs:
           libssl-dev \
           libtool \
           yasm \
-          nasm
+          nasm \
+          curl \
+          wget
 
     - name: Build ARM64 SDK (.so)
       run: |
