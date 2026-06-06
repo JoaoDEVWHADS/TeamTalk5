@@ -10,8 +10,8 @@ else()
   option (SPEEXDSP_STATIC "Build using static SpeexDSP libraries" ON)
 
   if (SPEEXDSP_STATIC)
-    set (SPEEXDSP_INCLUDE_DIR ${TTLIBS_ROOT}/speex/include)
-    set (SPEEXDSP_LINK_FLAGS ${TTLIBS_ROOT}/speex/lib/libspeexdsp.a)
+    set (SPEEXDSP_INCLUDE_DIR ${TTLIBS_ROOT}/speexdsp/include)
+    set (SPEEXDSP_LINK_FLAGS ${TTLIBS_ROOT}/speexdsp/lib/libspeexdsp.a)
   else()
     # Ubuntu: libspeexdsp-dev
     find_library(SPEEXDSP_LIBRARY speexdsp)
