@@ -25,14 +25,15 @@ jobs:
     - name: Add NASM to PATH
       run: echo "C:\Program Files\NASM" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - name: Cache Toolchain and Build
-      uses: actions/cache@v4
+    - name: Restore Cache
+      uses: actions/cache/restore@v4
       with:
         path: |
           Library/TeamTalkLib/toolchain
           Build
-        key: ${{ runner.os }}-windows-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}
+        key: ${{ runner.os }}-windows-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
+          ${{ runner.os }}-windows-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-
           ${{ runner.os }}-windows-arm64-toolchain-
 
     - name: Build Windows ARM64 SDK
@@ -73,3 +74,12 @@ jobs:
       with:
         name: TeamTalk5-windows-arm64
         path: Library/TeamTalk_DLL/Release/TeamTalk5-windows-arm64.dll
+
+    - name: Save Cache
+      uses: actions/cache/save@v4
+      if: always()
+      with:
+        path: |
+          Library/TeamTalkLib/toolchain
+          Build
+        key: ${{ runner.os }}-windows-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}

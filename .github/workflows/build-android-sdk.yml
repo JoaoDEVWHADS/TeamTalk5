@@ -24,14 +24,15 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build make perl curl wget nasm yasm
 
-    - name: Cache Toolchain and Build
-      uses: actions/cache@v4
+    - name: Restore Cache
+      uses: actions/cache/restore@v4
       with:
         path: |
           Library/TeamTalkLib/toolchain
           Build
-        key: ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}
+        key: ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
+          ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-
           ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-
 
     - name: Build Android SDK for ${{ matrix.abi }}
@@ -90,3 +91,12 @@ jobs:
       with:
         name: TeamTalk5-jar
         path: Library/TeamTalkJNI/TeamTalk5.jar
+
+    - name: Save Cache
+      uses: actions/cache/save@v4
+      if: always()
+      with:
+        path: |
+          Library/TeamTalkLib/toolchain
+          Build
+        key: ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}

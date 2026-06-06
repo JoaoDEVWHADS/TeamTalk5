@@ -20,14 +20,15 @@ jobs:
       run: |
           brew install ninja yasm nasm autoconf automake libtool
 
-    - name: Cache Toolchain and Build
-      uses: actions/cache@v4
+    - name: Restore Cache
+      uses: actions/cache/restore@v4
       with:
         path: |
           Library/TeamTalkLib/toolchain
           Build
-        key: ${{ runner.os }}-macos-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}
+        key: ${{ runner.os }}-macos-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
+          ${{ runner.os }}-macos-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-
           ${{ runner.os }}-macos-arm64-toolchain-
 
     - name: Build macOS arm64 SDK
@@ -71,3 +72,12 @@ jobs:
       with:
         name: libTeamTalk5-macos-arm64
         path: Library/TeamTalk_DLL/libTeamTalk5-macos-arm64.dylib
+
+    - name: Save Cache
+      uses: actions/cache/save@v4
+      if: always()
+      with:
+        path: |
+          Library/TeamTalkLib/toolchain
+          Build
+        key: ${{ runner.os }}-macos-arm64-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}

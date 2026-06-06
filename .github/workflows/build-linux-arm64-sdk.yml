@@ -52,14 +52,15 @@ jobs:
         ln -sf /usr/bin/gcc-12 /usr/bin/aarch64-linux-gnu-gcc
         ln -sf /usr/bin/g++-12 /usr/bin/aarch64-linux-gnu-g++
 
-    - name: Cache Toolchain and Build
-      uses: actions/cache@v4
+    - name: Restore Cache
+      uses: actions/cache/restore@v4
       with:
         path: |
           Library/TeamTalkLib/toolchain
           Build
-        key: ${{ runner.os }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}
+        key: ${{ runner.os }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
+          ${{ runner.os }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-
           ${{ runner.os }}-toolchain-
 
     - name: Build ARM64 SDK (.so)
@@ -103,3 +104,12 @@ jobs:
       with:
         name: libTeamTalk5-linux-arm64
         path: Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so
+
+    - name: Save Cache
+      uses: actions/cache/save@v4
+      if: always()
+      with:
+        path: |
+          Library/TeamTalkLib/toolchain
+          Build
+        key: ${{ runner.os }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}-${{ github.run_id }}-${{ github.run_attempt }}
