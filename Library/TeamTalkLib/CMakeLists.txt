@@ -6,7 +6,7 @@ set (TEAMTALKLIB_ROOT ${CMAKE_CURRENT_LIST_DIR})
 option (BUILD_TEAMTALK_STATIC "Build TeamTalk libraries and executables from toolchain" ON)
 
 if (BUILD_TEAMTALK_STATIC)
-
+  set (TTLIBS_ROOT "${TEAMTALKLIB_ROOT}/toolchain")
   add_subdirectory (toolchain)
 
   # if ($ENV{TTLIBS_ROOT})
