@@ -43,13 +43,16 @@ jobs:
         cmake -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DBUILD_TEAMTALK_CORE=ON \
+          -DBUILD_TEAMTALK_STATIC=ON \
           -DTOOLCHAIN_BUILD_EXTERNALPROJECTS=ON \
           -DWEBRTC=OFF \
-          -DFEATURE_WEBRTC=OFF \
-          -DBUILD_TEAMTALK_LIBRARY_DLL=ON \
-          -DBUILD_TEAMTALK_SERVER_SRVEXE=OFF \
-          -DBUILD_TEAMTALK_SERVER_SRVEXEPRO=OFF \
-          -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2=OFF
+          -DBUILD_TEAMTALK5DLL=ON \
+          -DBUILD_TEAMTALK5PRODLL=OFF \
+          -DBUILD_TEAMTALK5LIB=OFF \
+          -DBUILD_TEAMTALK5PROLIB=OFF \
+          -DBUILD_TT5SRV=OFF \
+          -DBUILD_TT5PROSRV=OFF \
+          -DCATCH_UNITTEST=OFF
         
         cmake --build Build --target TeamTalk5DLL
 
