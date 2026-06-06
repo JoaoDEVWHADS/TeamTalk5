@@ -49,6 +49,16 @@ jobs:
           wget
         update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 --slave /usr/bin/g++ g++ /usr/bin/g++-12
 
+    - name: Cache Toolchain and Build
+      uses: actions/cache@v4
+      with:
+        path: |
+          Library/TeamTalkLib/toolchain
+          Build
+        key: ${{ runner.os }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}
+        restore-keys: |
+          ${{ runner.os }}-toolchain-
+
     - name: Build x86_64 SDK (.so)
       run: |
         export PYTHONPATH=""

@@ -24,6 +24,16 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build make perl curl wget nasm yasm
 
+    - name: Cache Toolchain and Build
+      uses: actions/cache@v4
+      with:
+        path: |
+          Library/TeamTalkLib/toolchain
+          Build
+        key: ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-${{ hashFiles('Library/TeamTalkLib/toolchain/**/CMakeLists.txt', 'Library/TeamTalkLib/toolchain/**/*.patch') }}
+        restore-keys: |
+          ${{ runner.os }}-android-${{ matrix.abi }}-toolchain-
+
     - name: Build Android SDK for ${{ matrix.abi }}
       run: |
         cmake -B Build -G Ninja \
