@@ -19,7 +19,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-ace-static-v2-arm64
+        key: ${{ runner.os }}-ace-static-v3-arm64
 
     - name: Build inside Ubuntu 20.04 Container
       run: |
@@ -71,12 +71,14 @@ jobs:
             echo 'include \$(ACE_ROOT)/include/makeinclude/platform_linux.GNU' > include/makeinclude/platform_macros.GNU && \
             echo 'shared_libs = 0' >> include/makeinclude/platform_macros.GNU && \
             echo 'static_libs = 1' >> include/makeinclude/platform_macros.GNU && \
+            echo 'ssl = 1' >> include/makeinclude/platform_macros.GNU && \
             
             # Build only the components we need
             cd \$ACE_ROOT/ace && make -j\$(nproc) && \
             cd \$ACE_ROOT/ace/SSL && make -j\$(nproc) && \
-            cd \$ACE_ROOT/protocols/ace/INet && make -j\$(nproc) && \
-            cd \$ACE_ROOT/protocols/ace/INet/SSL && make -j\$(nproc) && \
+            cd \$ACE_ROOT/protocols/ace/INet && \
+            make -f GNUmakefile.INet -j\$(nproc) && \
+            make -f GNUmakefile.INet_SSL -j\$(nproc) && \
             
             # Create the TTLIBS structure in the shared workspace
             mkdir -p /workspace/ttlibs/ACE/lib && \
