@@ -194,6 +194,7 @@ jobs:
             libspeechd-dev \
             libssl-dev \
             libxss-dev \
+            ninja-build \
             pkg-config \
             libavcodec-dev \
             libavdevice-dev \
