@@ -17,6 +17,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install dependencies
+      shell: bash
       run: |
         apt-get update
         DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -53,6 +54,7 @@ jobs:
           libswscale-dev
 
     - name: Build ARM64 SDK (.so)
+      shell: bash
       run: |
         export PYTHONPATH=""
         source env.sh
