@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 project (TeamTalk5Lib)
 
 set (TEAMTALKLIB_ROOT ${CMAKE_CURRENT_LIST_DIR})
