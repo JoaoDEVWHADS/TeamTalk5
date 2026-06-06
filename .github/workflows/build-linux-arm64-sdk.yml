@@ -19,7 +19,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-static-libs-v6-arm64
+        key: ${{ runner.os }}-static-libs-v7-arm64
 
     - name: Build Dependencies (ACE & WebRTC)
       run: |
@@ -168,13 +168,14 @@ jobs:
             echo '=== Cache hit: Using cached static WebRTC ===' ; \
           fi
         "
+        sudo chown -R $USER:$USER ${{ github.workspace }}/ttlibs
 
     - name: Save static ACE and dependencies cache
       uses: actions/cache/save@v4
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-static-libs-v6-arm64
+        key: ${{ runner.os }}-static-libs-v7-arm64
 
     - name: Build TeamTalk 5
       run: |
@@ -221,6 +222,7 @@ jobs:
           echo '=== Stripping libTeamTalk5.so ===' && \
           strip Library/TeamTalk_DLL/libTeamTalk5.so
         "
+        sudo chown -R $USER:$USER ${{ github.workspace }}
 
     - name: Upload libTeamTalk5.so Artifact
       uses: actions/upload-artifact@v4
