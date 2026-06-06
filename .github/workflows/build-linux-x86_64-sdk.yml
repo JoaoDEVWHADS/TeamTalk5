@@ -47,11 +47,10 @@ jobs:
           nasm \
           curl \
           wget
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
 
     - name: Build x86_64 SDK (.so)
       run: |
-        export CC=gcc-10
-        export CXX=g++-10
         export PYTHONPATH=""
         cmake -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \

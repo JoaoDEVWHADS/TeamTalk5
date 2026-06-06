@@ -47,11 +47,13 @@ jobs:
           nasm \
           curl \
           wget
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
+        # Link aarch64-linux-gnu-g++ to g++-10 since the build runs natively on ARM64 and WebRTC expects this binary
+        ln -sf /usr/bin/gcc-10 /usr/bin/aarch64-linux-gnu-gcc
+        ln -sf /usr/bin/g++-10 /usr/bin/aarch64-linux-gnu-g++
 
     - name: Build ARM64 SDK (.so)
       run: |
-        export CC=gcc-10
-        export CXX=g++-10
         export PYTHONPATH=""
         cmake -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \

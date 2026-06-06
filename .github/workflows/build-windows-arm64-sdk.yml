@@ -11,6 +11,9 @@ jobs:
   build-windows-arm64:
     runs-on: windows-latest
     steps:
+    - name: Configure Git Longpaths
+      run: git config --global core.longpaths true
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with:

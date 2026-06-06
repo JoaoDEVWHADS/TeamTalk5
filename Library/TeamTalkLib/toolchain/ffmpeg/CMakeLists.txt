@@ -470,6 +470,7 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
       # Compile options
       --disable-debug
       --enable-pic
+      --disable-x86asm
       BUILD_COMMAND     make ${TOOLCHAIN_BUILD_MAKEJOBS}
       INSTALL_COMMAND   make ${TOOLCHAIN_BUILD_MAKEJOBS} install
       BUILD_BYPRODUCTS  <INSTALL_DIR>/lib/libavdevice.a
