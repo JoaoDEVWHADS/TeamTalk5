@@ -5,7 +5,7 @@ project(Bash)
 ##################################################
 
 if (MSVC AND TOOLCHAIN_BUILD_EXTERNALPROJECTS)
-  find_program(BASH_EXE_PATH bash.exe PATHS C:/msys64/usr/bin C:/cygwin64/bin $ENV{PATH} NO_DEFAULT_PATH)
+  find_program(BASH_EXE_PATH bash.exe PATHS "C:/Program Files/Git/bin" "C:/Program Files/Git/usr/bin" C:/msys64/usr/bin C:/cygwin64/bin $ENV{PATH} NO_DEFAULT_PATH)
 
   if (BASH_EXE_PATH-NOTFOUND)
     message(WARNING "MSYS2 or Cygwin bash.exe is required")

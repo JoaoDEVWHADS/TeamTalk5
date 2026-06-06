@@ -20,11 +20,11 @@ else()
 endif()
 
 if (${CMAKE_VERSION} VERSION_GREATER "3.1")
-  # WebRTC makes use of std::make_reverse_iterator which is C++14
-  set (CMAKE_CXX_STANDARD 14)
+  # WebRTC makes use of C++20 features (like std::span)
+  set (CMAKE_CXX_STANDARD 20)
 else()
   if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    list (APPEND COMPILE_FLAGS -std=c++14)
+    list (APPEND COMPILE_FLAGS -std=c++20)
   endif()
 endif()
 
