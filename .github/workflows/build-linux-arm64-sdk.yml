@@ -23,53 +23,43 @@ jobs:
         DEBIAN_FRONTEND=noninteractive apt-get install -y \
           cmake \
           g++ \
+          gcc \
           git \
+          make \
+          ninja-build \
+          perl \
+          pkg-config \
           libasound2-dev \
+          libpulse-dev \
+          libxss-dev \
           libglib2.0-dev \
           libpcap-dev \
-          libpulse-dev \
-          libspeechd-dev \
-          libssl-dev \
-          libtool \
-          libxss-dev \
-          ninja-build \
-          pkg-config \
-          libopus-dev \
-          libspeex-dev \
-          libspeexdsp-dev \
-          libvpx-dev \
-          libace-dev \
-          libace-inet-dev \
-          libace-inet-ssl-dev \
-          libtinyxml-dev \
-          libogg-dev \
-          zlib1g-dev \
-          portaudio19-dev \
-          libavcodec-dev \
-          libavdevice-dev \
-          libavfilter-dev \
-          libavformat-dev \
-          libavutil-dev \
-          libswresample-dev \
-          libswscale-dev
+          libspeechd-dev
 
     - name: Build ARM64 SDK (.so)
       shell: bash
       run: |
         export PYTHONPATH=""
-        source env.sh
-        make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=OFF -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+        cmake -B Build -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DTOOLCHAIN_BUILD_EXTERNALPROJECTS=ON \
+          -DWEBRTC=OFF \
+          -DFEATURE_WEBRTC=OFF \
+          -DBUILD_TEAMTALK_LIBRARY_DLL=ON \
+          -DBUILD_TEAMTALK_SERVER_SRVEXE=OFF \
+          -DBUILD_TEAMTALK_SERVER_SRVEXEPRO=OFF \
+          -DBUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2=OFF
+        
+        cmake --build Build --target TeamTalk5DLL
 
-    - name: Upload libTeamTalk5.so Artifact
+    - name: Prepare architecture-specific artifact
+      shell: bash
+      run: |
+        cp Library/TeamTalk_DLL/libTeamTalk5.so Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so
+
+    - name: Upload libTeamTalk5-linux-arm64.so Artifact
       uses: actions/upload-artifact@v4
       if: success()
       with:
         name: libTeamTalk5-linux-arm64
-        path: Library/TeamTalk_DLL/libTeamTalk5.so
-
-    - name: Upload Build Log (On Failure)
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: compile-build-log
-        path: build.log
+        path: Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so

@@ -1,13 +1,16 @@
 include (ttlib)
 
-set (TTSRVLIB_INCLUDE_DIR ${ACE_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR} ${TEAMTALKLIB_ROOT})
-set (TTSRVLIB_COMPILE_FLAGS ${ACE_COMPILE_FLAGS} -DENABLE_HTTP_AUTH -DENABLE_ENCRYPTION)
+set (TTSRVLIB_INCLUDE_DIR ${TEAMTALKLIB_ROOT})
+set (TTSRVLIB_COMPILE_FLAGS ${ACE_COMPILE_FLAGS} -DENABLE_HTTP_AUTH)
+set (TTSRVLIB_SSL_COMPILE_FLAGS ${TTSRVLIB_COMPILE_FLAGS} -DENABLE_ENCRYPTION)
 # SSL required for HTTPS weblogin (BearWare.dk)
-set (TTSRVLIB_LINK_FLAGS ${ACE_LINK_FLAGS} ${OPENSSL_LINK_FLAGS})
+set (TTSRVLIB_LINK_FLAGS ${ACE_LINK_FLAGS})
+set (TTSRVLIB_SSL_LINK_FLAGS ${ACE_SSL_LINK_FLAGS} ${TTSRVLIB_LINK_FLAGS} ${OPENSSL_LINK_FLAGS})
 
 set (TTSRVLIB_HEADERS 
   ${TEAMTALKLIB_ROOT}/TeamTalkDefs.h
   ${TEAMTALKLIB_ROOT}/myace/MyACE.h
+  ${TEAMTALKLIB_ROOT}/myace/MyINet.h
   ${TEAMTALKLIB_ROOT}/myace/TimerHandler.h
   ${TEAMTALKLIB_ROOT}/mystd/MyStd.h
   ${TEAMTALKLIB_ROOT}/teamtalk/Channel.h
@@ -20,7 +23,7 @@ set (TTSRVLIB_HEADERS
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketHelper.h
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketLayout.h
   ${TEAMTALKLIB_ROOT}/teamtalk/StreamHandler.h
-  ${TEAMTALKLIB_ROOT}/teamtalk/ttassert.h
+  ${TEAMTALKLIB_ROOT}/teamtalk/TTAssert.h
   ${TEAMTALKLIB_ROOT}/teamtalk/User.h
   ${TEAMTALKLIB_ROOT}/teamtalk/server/AcceptHandler.h
   ${TEAMTALKLIB_ROOT}/teamtalk/server/DesktopCache.h
@@ -31,6 +34,7 @@ set (TTSRVLIB_HEADERS
 
 set (TTSRVLIB_SOURCES
   ${TEAMTALKLIB_ROOT}/myace/MyACE.cpp
+  ${TEAMTALKLIB_ROOT}/myace/MyINet.cpp
   ${TEAMTALKLIB_ROOT}/myace/TimerHandler.cpp
   ${TEAMTALKLIB_ROOT}/mystd/MyStd.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/Channel.cpp
@@ -42,7 +46,7 @@ set (TTSRVLIB_SOURCES
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketHelper.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketLayout.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/StreamHandler.cpp
-  ${TEAMTALKLIB_ROOT}/teamtalk/ttassert.cpp
+  ${TEAMTALKLIB_ROOT}/teamtalk/TTAssert.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/User.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/server/AcceptHandler.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/server/DesktopCache.cpp

@@ -6,12 +6,9 @@ include (codec)
 include (avstream)
 
 set (TTCLIENT_INCLUDE_DIR
-  ${ACE_INCLUDE_DIR}
-  ${ZLIB_INCLUDE_DIR}
   ${CODEC_INCLUDE_DIR}
   ${AVSTREAM_INCLUDE_DIR}
   ${SOUNDSYS_INCLUDE_DIR}
-  ${OPENSSL_INCLUDE_DIR}
   ${TEAMTALKLIB_ROOT})
 
 set (TTCLIENT_COMPILE_FLAGS
@@ -23,6 +20,7 @@ set (TTCLIENT_COMPILE_FLAGS
   -DENABLE_ENCRYPTION)
 
 set (TTCLIENT_LINK_FLAGS
+  ${ACE_SSL_LINK_FLAGS}
   ${ACE_LINK_FLAGS}
   ${CODEC_LINK_FLAGS}
   ${AVSTREAM_LINK_FLAGS}
@@ -36,7 +34,9 @@ set (TTCLIENT_HEADERS
   ${TEAMTALKLIB_ROOT}/avstream/VideoCapture.h
   ${TEAMTALKLIB_ROOT}/codec/BmpFile.h
   ${TEAMTALKLIB_ROOT}/codec/WaveFile.h
+  ${TEAMTALKLIB_ROOT}/license/Trial.h
   ${TEAMTALKLIB_ROOT}/myace/MyACE.h
+  ${TEAMTALKLIB_ROOT}/myace/MyINet.h
   ${TEAMTALKLIB_ROOT}/myace/TimerHandler.h
   ${TEAMTALKLIB_ROOT}/mystd/MyStd.h
   ${TEAMTALKLIB_ROOT}/TeamTalkDefs.h
@@ -50,7 +50,7 @@ set (TTCLIENT_HEADERS
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketHelper.h
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketLayout.h
   ${TEAMTALKLIB_ROOT}/teamtalk/StreamHandler.h
-  ${TEAMTALKLIB_ROOT}/teamtalk/ttassert.h
+  ${TEAMTALKLIB_ROOT}/teamtalk/TTAssert.h
   ${TEAMTALKLIB_ROOT}/teamtalk/User.h
   ${TEAMTALKLIB_ROOT}/teamtalk/client/AudioContainer.h
   ${TEAMTALKLIB_ROOT}/teamtalk/client/AudioThread.h
@@ -69,12 +69,14 @@ set (TTCLIENT_HEADERS
 
 set ( TTCLIENT_SOURCES
   ${TEAMTALKLIB_ROOT}/myace/MyACE.cpp
+  ${TEAMTALKLIB_ROOT}/myace/MyINet.cpp
   ${TEAMTALKLIB_ROOT}/myace/TimerHandler.cpp
   ${TEAMTALKLIB_ROOT}/mystd/MyStd.cpp
   ${TEAMTALKLIB_ROOT}/avstream/AudioResampler.cpp
   ${TEAMTALKLIB_ROOT}/avstream/VideoCapture.cpp
   ${TEAMTALKLIB_ROOT}/codec/BmpFile.cpp
   ${TEAMTALKLIB_ROOT}/codec/WaveFile.cpp
+  ${TEAMTALKLIB_ROOT}/license/Trial.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/Channel.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/CodecCommon.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/Commands.cpp
@@ -84,7 +86,7 @@ set ( TTCLIENT_SOURCES
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketHelper.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/PacketLayout.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/StreamHandler.cpp
-  ${TEAMTALKLIB_ROOT}/teamtalk/ttassert.cpp
+  ${TEAMTALKLIB_ROOT}/teamtalk/TTAssert.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/User.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/client/AudioContainer.cpp
   ${TEAMTALKLIB_ROOT}/teamtalk/client/AudioThread.cpp
@@ -102,20 +104,25 @@ set ( TTCLIENT_SOURCES
 list (APPEND TTCLIENT_SOURCES ${AVSTREAM_SOURCES} ${CODEC_SOURCES} ${SOUNDSYS_SOURCES})
 list (APPEND TTCLIENT_HEADERS ${AVSTREAM_HEADERS} ${CODEC_HEADERS} ${SOUNDSYS_HEADERS})
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR ${CMAKE_SYSTEM_NAME} MATCHES "iOS")
+  list (APPEND TTCLIENT_SOURCES ${TEAMTALKLIB_ROOT}/license/TrialObjC.mm )
 
-  find_library(COCOA_LIBRARY Cocoa)
-  list (APPEND TTCLIENT_LINK_FLAGS ${COCOA_LIBRARY} )
+  if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_library(COCOA_LIBRARY Cocoa)
+    list (APPEND TTCLIENT_LINK_FLAGS ${COCOA_LIBRARY} )
+  endif()
 
 endif()
 
 if (WIN32)
   list (APPEND TTCLIENT_HEADERS
+    ${TEAMTALKLIB_ROOT}/win32/AudioDeviceNotify.h
     ${TEAMTALKLIB_ROOT}/win32/HotKey.h
     ${TEAMTALKLIB_ROOT}/win32/Mixer.h
     ${TEAMTALKLIB_ROOT}/win32/WinFirewall.h )
 
   list (APPEND TTCLIENT_SOURCES
+    ${TEAMTALKLIB_ROOT}/win32/AudioDeviceNotify.cpp
     ${TEAMTALKLIB_ROOT}/win32/HotKey.cpp
     ${TEAMTALKLIB_ROOT}/win32/Mixer.cpp
     ${TEAMTALKLIB_ROOT}/win32/WinFirewall.cpp )

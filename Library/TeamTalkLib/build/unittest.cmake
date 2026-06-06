@@ -1,25 +1,29 @@
 option (MSVS_UNITTEST "Build Visual Studio Unit Tests" OFF)
+add_feature_info (MSVS_UNITTEST MSVS_UNITTEST "Visual Studio format unit tests for TeamTalk")
 if (MSVS_UNITTEST)
   set (MSVS_UNITTEST_SOURCES ${TEAMTALKLIB_ROOT}/test/UnitTestWin.cpp
 	   ${TEAMTALKLIB_ROOT}/test/TTUnitTest.cpp ${TEAMTALKLIB_ROOT}/test/TTUnitTest.h)
 endif()
 
-option (CATCH_UNITTEST "Build Catch Unit Tests" OFF)
-if (CATCH_UNITTEST)
+option (BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2 "Build Catch Unit Tests" OFF)
+add_feature_info (BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2 BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2 "Catch2 unit tests for TeamTalk")
+if (BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2)
   set (CATCH_UNITTEST_SOURCES ${TEAMTALKLIB_ROOT}/test/CatchDefault.cpp
-    ${TEAMTALKLIB_ROOT}/test/CatchMain.cpp ${TEAMTALKLIB_ROOT}/test/TTUnitTest.cpp
+    ${TEAMTALKLIB_ROOT}/test/CatchServerXML.cpp
+    ${TEAMTALKLIB_ROOT}/test/TTUnitTest.cpp
     ${TEAMTALKLIB_ROOT}/test/TTUnitTest.h)
 
   if (MSVC)
     list (APPEND CATCH_UNITTEST_SOURCES ${TEAMTALKLIB_ROOT}/test/CatchWin.cpp)
   endif()
   
-  if (WEBRTC)
+  if (FEATURE_WEBRTC)
     list (APPEND CATCH_UNITTEST_SOURCES ${TEAMTALKLIB_ROOT}/test/CatchWebRTC.cpp)
   endif()
 
-  option (CATCH_UNITTEST_PERF "Include performance dependent Catch Unit Tests" ON)
-  if (CATCH_UNITTEST_PERF)
+  option (BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF "Include performance dependent Catch Unit Tests" ON)
+  add_feature_info (BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF "Catch2 unit tests for TeamTalk that are performance dependent")
+  if (BUILD_TEAMTALK_LIBRARY_UNITTEST_CATCH2_PERF)
     list (APPEND CATCH_UNITTEST_SOURCES ${TEAMTALKLIB_ROOT}/test/CatchPerf.cpp)
   endif()
 
