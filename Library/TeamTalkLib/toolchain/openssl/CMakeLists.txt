@@ -141,7 +141,7 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
 
-  if ("${CMAKE_OSX_SYSROOT}" MATCHES "simulator")
+  if ("${CMAKE_OSX_SYSROOT}" MATCHES "simulator" OR "${CMAKE_OSX_SYSROOT}" MATCHES "Simulator")
     set (OPENSSL_CFG_PREFIX export CROSS_TOP=${CMAKE_OSX_SYSROOT}/../.. && export CROSS_SDK=iPhoneSimulator.sdk)
     set (OPENSSL_CFG_TARGET iossimulator-xcrun)
     set (OPENSSL_CFG_POSTFIX -mios-simulator-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
