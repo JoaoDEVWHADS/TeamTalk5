@@ -19,7 +19,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-static-libs-v4-arm64
+        key: ${{ runner.os }}-static-libs-v5-arm64
 
     - name: Build inside Ubuntu 20.04 Container
       run: |
@@ -123,12 +123,44 @@ jobs:
             echo '=== Cache hit: Using cached static ACE & system libraries ===' ; \
           fi && \
           
-          # 2. Build TeamTalk 5
+          # 2. Build WebRTC if not cached
+          if [ ! -f \"/workspace/ttlibs/webrtc/obj/modules/audio_processing/libteamtalk.a\" ]; then \
+            echo '=== Cache miss: Downloading and building WebRTC ===' && \
+            apt-get install -y python3 rsync curl && \
+            mkdir -p /tmp/webrtc-fetch && \
+            cd /tmp/webrtc-fetch && \
+            git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git /tmp/depot-tools && \
+            export PATH=\$PATH:/tmp/depot-tools && \
+            export DEPOT_TOOLS_UPDATE=0 && \
+            fetch --nohooks webrtc && \
+            cd src && \
+            git checkout branch-heads/7778 && \
+            gclient sync -D --force --reset --no-history -j\$(nproc) && \
+            git apply /workspace/Library/TeamTalkLib/build/webrtc/0001-Add-teamtalk-static-lib.patch && \
+            mkdir -p out/Release && \
+            cp /workspace/Library/TeamTalkLib/build/webrtc/args.gn_linux out/Release/args.gn && \
+            gn gen out/Release && \
+            ninja -C out/Release teamtalk && \
+            mkdir -p /workspace/ttlibs/webrtc/obj/modules/audio_processing && \
+            cp out/Release/obj/modules/audio_processing/libteamtalk.a /workspace/ttlibs/webrtc/obj/modules/audio_processing/ && \
+            mkdir -p /workspace/ttlibs/webrtc/include && \
+            find . -type f -name \"*.h\" -exec cp --parents \{\} /workspace/ttlibs/webrtc/include/ \; && \
+            find . -type f -name \"*.inc\" -exec cp -r --parents \{\} /workspace/ttlibs/webrtc/include/ \; && \
+            rm -rf /tmp/webrtc-fetch /tmp/depot-tools ; \
+          else \
+            echo '=== Cache hit: Using cached static WebRTC ===' ; \
+          fi && \
+          
+          # 3. Build TeamTalk 5
           echo '=== Building TeamTalk 5 ===' && \
           cd /workspace && \
           export PYTHONPATH='' && \
           source env.sh && \
-          make CMAKE_EXTRA='-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=ON -DSPEEX_STATIC=ON -DLIBVPX_STATIC=ON -DACE_STATIC=ON -DTTLIBS_ROOT=/workspace/ttlibs -DOGG_STATIC=ON -DOPUS_STATIC=ON -DZLIB_STATIC=ON -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=ON -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF' -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+          make CMAKE_EXTRA='-DWEBRTC=ON -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=ON -DSPEEX_STATIC=ON -DLIBVPX_STATIC=ON -DACE_STATIC=ON -DTTLIBS_ROOT=/workspace/ttlibs -DOGG_STATIC=ON -DOPUS_STATIC=ON -DZLIB_STATIC=ON -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=ON -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF' -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1) && \
+          
+          # 4. Strip final .so binary
+          echo '=== Stripping libTeamTalk5.so ===' && \
+          strip Library/TeamTalk_DLL/libTeamTalk5.so
         "
 
     - name: Upload libTeamTalk5.so Artifact
