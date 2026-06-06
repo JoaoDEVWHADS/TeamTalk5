@@ -42,7 +42,9 @@ jobs:
           libpcap-dev \
           libspeechd-dev \
           libssl-dev \
-          libtool
+          libtool \
+          yasm \
+          nasm
 
     - name: Build x86_64 SDK (.so)
       shell: bash
