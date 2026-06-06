@@ -65,10 +65,10 @@ jobs:
           echo 'static_libs = 1' >> include/makeinclude/platform_macros.GNU && \
           
           # Build only the components we need
-          cd ace && make -j\$(nproc) && \
-          cd ../protocols/ace/SSL && make -j\$(nproc) && \
-          cd ../INet && make -j\$(nproc) && \
-          cd ../INet/SSL && make -j\$(nproc) && \
+          cd \$ACE_ROOT/ace && make -j\$(nproc) && \
+          cd \$ACE_ROOT/ace/SSL && make -j\$(nproc) && \
+          cd \$ACE_ROOT/protocols/ace/INet && make -j\$(nproc) && \
+          cd \$ACE_ROOT/protocols/ace/INet/SSL && make -j\$(nproc) && \
           
           # Create the TTLIBS structure
           mkdir -p /tmp/ttlibs/ACE/lib && \
