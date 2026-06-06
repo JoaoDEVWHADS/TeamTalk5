@@ -126,4 +126,78 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set_target_properties(zlib PROPERTIES
     IMPORTED_LOCATION ${INSTALL_DIR}/lib/libz.a)
 
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
+
+  set (ZLIB_CFG_FLAGS -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}
+                      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+                      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+                      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+                      -DCMAKE_C_FLAGS_RELEASE=-fembed-bitcode
+                      -DCMAKE_BUILD_TYPE=release)
+
+  if (TOOLCHAIN_BUILD_EXTERNALPROJECTS)
+    ExternalProject_Add(zlib-src
+      GIT_REPOSITORY    https://github.com/madler/zlib.git
+      GIT_TAG           v1.3.2
+      GIT_SHALLOW       TRUE
+      UPDATE_COMMAND    ""
+      PREFIX            ${TOOLCHAIN_BUILD_PREFIX}/zlib
+      INSTALL_DIR       ${TOOLCHAIN_INSTALL_PREFIX_ZLIB}
+      CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> ${ZLIB_CFG_FLAGS}
+                        -DZLIB_BUILD_TESTING=OFF
+                        -DZLIB_BUILD_SHARED=OFF
+      BUILD_COMMAND     ${CMAKE_COMMAND} --build . --target zlibstatic
+      INSTALL_COMMAND   ${CMAKE_COMMAND} --build . --target install
+      BUILD_BYPRODUCTS  <INSTALL_DIR>/lib/libz.a
+      )
+    ExternalProject_Get_Property(zlib-src INSTALL_DIR)
+    file(MAKE_DIRECTORY ${INSTALL_DIR}/include)
+  else()
+    set (INSTALL_DIR ${TOOLCHAIN_INSTALL_PREFIX_ZLIB})
+  endif()
+
+  add_library(zlib STATIC IMPORTED GLOBAL)
+  if (TOOLCHAIN_BUILD_EXTERNALPROJECTS)
+    add_dependencies(zlib zlib-src)
+  endif()
+  target_include_directories (zlib INTERFACE ${INSTALL_DIR}/include)
+  set_target_properties(zlib PROPERTIES
+    IMPORTED_LOCATION ${INSTALL_DIR}/lib/libz.a)
+
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
+
+  set (ZLIB_CFG_FLAGS -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+    -DANDROID_ABI=${ANDROID_ABI} -DANDROID_PLATFORM=${ANDROID_PLATFORM}
+    -DCMAKE_BUILD_TYPE=release)
+
+  if (TOOLCHAIN_BUILD_EXTERNALPROJECTS)
+    ExternalProject_Add(zlib-src
+      GIT_REPOSITORY    https://github.com/madler/zlib.git
+      GIT_TAG           v1.3.2
+      GIT_SHALLOW       TRUE
+      UPDATE_COMMAND    ""
+      PREFIX            ${TOOLCHAIN_BUILD_PREFIX}/zlib
+      INSTALL_DIR       ${TOOLCHAIN_INSTALL_PREFIX_ZLIB}
+      CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> ${ZLIB_CFG_FLAGS}
+                        -DZLIB_BUILD_TESTING=OFF
+                        -DZLIB_BUILD_SHARED=OFF
+      BUILD_COMMAND     ${CMAKE_COMMAND} --build . --target zlibstatic
+      INSTALL_COMMAND   ${CMAKE_COMMAND} --build . --target install
+      BUILD_BYPRODUCTS  <INSTALL_DIR>/lib/libz.a
+      )
+    ExternalProject_Get_Property(zlib-src INSTALL_DIR)
+    file(MAKE_DIRECTORY ${INSTALL_DIR}/include)
+  else()
+    set (INSTALL_DIR ${TOOLCHAIN_INSTALL_PREFIX_ZLIB})
+  endif()
+
+  add_library(zlib STATIC IMPORTED GLOBAL)
+  if (TOOLCHAIN_BUILD_EXTERNALPROJECTS)
+    add_dependencies(zlib zlib-src)
+  endif()
+  target_include_directories (zlib INTERFACE ${INSTALL_DIR}/include)
+  set_target_properties(zlib PROPERTIES
+    IMPORTED_LOCATION ${INSTALL_DIR}/lib/libz.a)
+
 endif()
