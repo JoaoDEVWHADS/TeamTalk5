@@ -1,6 +1,7 @@
 ./*.sln
 ./*.bat
 build-*
+!.github/workflows/**
 CMakeFiles
 CMakeLists.txt.user
 TAGS

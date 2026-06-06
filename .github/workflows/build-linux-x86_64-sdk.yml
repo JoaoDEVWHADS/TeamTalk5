@@ -1,4 +1,4 @@
-name: Build Linux ARM64 SDK (v5.8.1)
+name: Build Linux x86_64 SDK (v5.8.1)
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-arm64:
-    runs-on: ubuntu-24.04-arm
+  build-x86_64:
+    runs-on: ubuntu-latest
     container:
       image: ubuntu:20.04
     steps:
@@ -38,7 +38,7 @@ jobs:
           libssl-dev \
           libtool
 
-    - name: Build ARM64 SDK (.so)
+    - name: Build x86_64 SDK (.so)
       shell: bash
       run: |
         export PYTHONPATH=""
@@ -63,11 +63,11 @@ jobs:
     - name: Prepare architecture-specific artifact
       shell: bash
       run: |
-        cp Library/TeamTalk_DLL/libTeamTalk5.so Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so
+        cp Library/TeamTalk_DLL/libTeamTalk5.so Library/TeamTalk_DLL/libTeamTalk5-linux-x86_64.so
 
-    - name: Upload libTeamTalk5-linux-arm64.so Artifact
+    - name: Upload libTeamTalk5-linux-x86_64.so Artifact
       uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: libTeamTalk5-linux-arm64
-        path: Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so
+        name: libTeamTalk5-linux-x86_64
+        path: Library/TeamTalk_DLL/libTeamTalk5-linux-x86_64.so

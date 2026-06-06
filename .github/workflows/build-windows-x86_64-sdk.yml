@@ -1,0 +1,51 @@
+name: Build Windows x86_64 SDK (v5.8.1)
+
+on:
+  push:
+    branches: [ "v5.8.1-custom" ]
+  pull_request:
+    branches: [ "v5.8.1-custom" ]
+  workflow_dispatch:
+
+jobs:
+  build-windows-x64:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install NASM
+      run: choco install nasm -y
+
+    - name: Add NASM to PATH
+      run: echo "C:\Program Files\NASM" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Build Windows x64 SDK
+      run: |
+        cmake -B Build -A x64 `
+          -DBUILD_TEAMTALK_CORE=ON `
+          -DBUILD_TEAMTALK_STATIC=ON `
+          -DTOOLCHAIN_BUILD_EXTERNALPROJECTS=ON `
+          -DWEBRTC=ON `
+          -DFEATURE_WEBRTC=ON `
+          -DFEATURE_OPUSTOOLS=ON `
+          -DBUILD_TEAMTALK5DLL=ON `
+          -DBUILD_TEAMTALK5PRODLL=OFF `
+          -DBUILD_TEAMTALK5LIB=OFF `
+          -DBUILD_TEAMTALK5PROLIB=OFF `
+          -DBUILD_TT5SRV=OFF `
+          -DBUILD_TT5PROSRV=OFF `
+          -DCATCH_UNITTEST=OFF
+        
+        cmake --build Build --config Release --target TeamTalk5DLL
+
+    - name: Prepare architecture-specific artifact
+      run: |
+        Copy-Item Library/TeamTalk_DLL/Release/TeamTalk5.dll Library/TeamTalk_DLL/Release/TeamTalk5-windows-x64.dll
+
+    - name: Upload TeamTalk5-windows-x64.dll Artifact
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: TeamTalk5-windows-x64
+        path: Library/TeamTalk_DLL/Release/TeamTalk5-windows-x64.dll

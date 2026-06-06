@@ -1,0 +1,55 @@
+name: Build iOS SDK (v5.8.1)
+
+on:
+  push:
+    branches: [ "v5.8.1-custom" ]
+  pull_request:
+    branches: [ "v5.8.1-custom" ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [
+          { sdk: iphoneos, arch: arm64 },
+          { sdk: iphonesimulator, arch: x86_64 },
+          { sdk: iphonesimulator, arch: arm64 }
+        ]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        brew install ninja
+
+    - name: Build iOS SDK for ${{ matrix.target.sdk }} (${{ matrix.target.arch }})
+      run: |
+        cmake -B Build -G Ninja \
+          -DCMAKE_SYSTEM_NAME=iOS \
+          -DCMAKE_OSX_SYSROOT=${{ matrix.target.sdk }} \
+          -DCMAKE_OSX_ARCHITECTURES=${{ matrix.target.arch }} \
+          -DBUILD_TEAMTALK_CORE=ON \
+          -DBUILD_TEAMTALK_STATIC=ON \
+          -DTOOLCHAIN_BUILD_EXTERNALPROJECTS=ON \
+          -DWEBRTC=ON \
+          -DFEATURE_WEBRTC=ON \
+          -DFEATURE_OPUSTOOLS=ON \
+          -DBUILD_TEAMTALK5DLL=OFF \
+          -DBUILD_TEAMTALK5PRODLL=OFF \
+          -DBUILD_TEAMTALK5LIB=ON \
+          -DBUILD_TEAMTALK5PROLIB=OFF \
+          -DBUILD_TT5SRV=OFF \
+          -DBUILD_TT5PROSRV=OFF \
+          -DCATCH_UNITTEST=OFF
+        
+        cmake --build Build --target TeamTalk5Lib
+
+    - name: Upload libTeamTalk5.a Artifact for ${{ matrix.target.sdk }}-${{ matrix.target.arch }}
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: libTeamTalk5-ios-${{ matrix.target.sdk }}-${{ matrix.target.arch }}
+        path: Library/TeamTalk_DLL/${{ matrix.target.arch }}/libTeamTalk5.a

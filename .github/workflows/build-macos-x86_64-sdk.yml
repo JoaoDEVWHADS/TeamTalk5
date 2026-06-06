@@ -1,4 +1,4 @@
-name: Build Linux ARM64 SDK (v5.8.1)
+name: Build macOS x86_64 SDK (v5.8.1)
 
 on:
   push:
@@ -8,44 +8,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-arm64:
-    runs-on: ubuntu-24.04-arm
-    container:
-      image: ubuntu:20.04
+  build-macos-x86_64:
+    runs-on: macos-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Install dependencies
-      shell: bash
       run: |
-        apt-get update
-        DEBIAN_FRONTEND=noninteractive apt-get install -y \
-          cmake \
-          g++ \
-          gcc \
-          git \
-          make \
-          ninja-build \
-          perl \
-          pkg-config \
-          libasound2-dev \
-          libpulse-dev \
-          libxss-dev \
-          libglib2.0-dev \
-          libpcap-dev \
-          libspeechd-dev \
-          libssl-dev \
-          libtool
+        brew install ninja
 
-    - name: Build ARM64 SDK (.so)
-      shell: bash
+    - name: Build macOS x86_64 SDK
       run: |
-        export PYTHONPATH=""
         cmake -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DBUILD_TEAMTALK_CORE=ON \
           -DBUILD_TEAMTALK_STATIC=ON \
+          -DCMAKE_OSX_ARCHITECTURES=x86_64 \
           -DTOOLCHAIN_BUILD_EXTERNALPROJECTS=ON \
           -DWEBRTC=ON \
           -DFEATURE_WEBRTC=ON \
@@ -61,13 +40,12 @@ jobs:
         cmake --build Build --target TeamTalk5DLL
 
     - name: Prepare architecture-specific artifact
-      shell: bash
       run: |
-        cp Library/TeamTalk_DLL/libTeamTalk5.so Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so
+        cp Library/TeamTalk_DLL/libTeamTalk5.dylib Library/TeamTalk_DLL/libTeamTalk5-macos-x86_64.dylib
 
-    - name: Upload libTeamTalk5-linux-arm64.so Artifact
+    - name: Upload libTeamTalk5-macos-x86_64.dylib Artifact
       uses: actions/upload-artifact@v4
       if: success()
       with:
-        name: libTeamTalk5-linux-arm64
-        path: Library/TeamTalk_DLL/libTeamTalk5-linux-arm64.so
+        name: libTeamTalk5-macos-x86_64
+        path: Library/TeamTalk_DLL/libTeamTalk5-macos-x86_64.dylib
