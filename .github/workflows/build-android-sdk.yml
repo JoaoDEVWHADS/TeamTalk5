@@ -45,6 +45,9 @@ jobs:
           -DDSHOW=ON \
           -DVIDCAP=ON \
           -DLAMEMP3=ON \
+          -DBUILD_TEAMTALK_LIBRARIES=ON \
+          -DBUILD_TEAMTALK_LIBRARY_JNI=ON \
+          -DBUILD_TEAMTALK_LIBRARY_JAR=ON \
           -DBUILD_TEAMTALK5DLL=ON \
           -DBUILD_TEAMTALK5PRODLL=OFF \
           -DBUILD_TEAMTALK5LIB=OFF \
@@ -54,10 +57,26 @@ jobs:
           -DCATCH_UNITTEST=OFF
         
         cmake --build Build --target TeamTalk5DLL
+        cmake --build Build --target TeamTalk5-jni
+
+    - name: Prepare architecture-specific artifact
+      run: |
+        mkdir -p Library/TeamTalk_DLL/${{ matrix.abi }}
+        # Copy the JNI library to our DLL directory as well
+        cp Library/TeamTalkJNI/libs/${{ matrix.abi }}/libTeamTalk5-jni.so Library/TeamTalk_DLL/${{ matrix.abi }}/
 
     - name: Upload libTeamTalk5.so Artifact for ${{ matrix.abi }}
       uses: actions/upload-artifact@v4
       if: success()
       with:
         name: libTeamTalk5-android-${{ matrix.abi }}
-        path: Library/TeamTalk_DLL/${{ matrix.abi }}/libTeamTalk5.so
+        path: |
+          Library/TeamTalk_DLL/${{ matrix.abi }}/libTeamTalk5.so
+          Library/TeamTalk_DLL/${{ matrix.abi }}/libTeamTalk5-jni.so
+
+    - name: Upload TeamTalk5.jar Artifact
+      uses: actions/upload-artifact@v4
+      if: success() && matrix.abi == 'arm64-v8a'
+      with:
+        name: TeamTalk5-jar
+        path: Library/TeamTalkJNI/TeamTalk5.jar
