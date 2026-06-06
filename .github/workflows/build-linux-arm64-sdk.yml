@@ -141,7 +141,9 @@ jobs:
           # 2. Build WebRTC if not cached
           if [ ! -f \"/workspace/ttlibs/webrtc/obj/modules/audio_processing/libteamtalk.a\" ]; then \
             echo '=== Cache miss: Downloading and building WebRTC ===' && \
-            apt-get install -y python3 rsync curl && \
+            apt-get install -y python3.9 python3.9-dev rsync curl && \
+            ln -sf /usr/bin/python3.9 /usr/bin/python3 && \
+            ln -sf /usr/bin/python3.9 /usr/bin/python && \
             mkdir -p /tmp/webrtc-fetch && \
             cd /tmp/webrtc-fetch && \
             git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git /tmp/depot-tools && \
