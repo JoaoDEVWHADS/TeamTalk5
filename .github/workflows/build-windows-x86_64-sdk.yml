@@ -31,6 +31,15 @@ jobs:
           -DWEBRTC=ON `
           -DFEATURE_WEBRTC=ON `
           -DFEATURE_OPUSTOOLS=ON `
+          -DFFMPEG=ON `
+          -DOPUS=ON `
+          -DSPEEX=ON `
+          -DSPEEXDSP=ON `
+          -DLIBVPX=ON `
+          -DOGG=ON `
+          -DDSHOW=ON `
+          -DVIDCAP=ON `
+          -DLAMEMP3=ON `
           -DBUILD_TEAMTALK5DLL=ON `
           -DBUILD_TEAMTALK5PRODLL=OFF `
           -DBUILD_TEAMTALK5LIB=OFF `

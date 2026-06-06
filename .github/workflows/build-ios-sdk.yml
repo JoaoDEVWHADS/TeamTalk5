@@ -25,7 +25,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        brew install ninja
+        brew install ninja yasm nasm autoconf automake libtool
 
     - name: Build iOS SDK for ${{ matrix.target.sdk }} (${{ matrix.target.arch }})
       run: |
@@ -40,6 +40,15 @@ jobs:
           -DWEBRTC=ON \
           -DFEATURE_WEBRTC=ON \
           -DFEATURE_OPUSTOOLS=ON \
+          -DFFMPEG=ON \
+          -DOPUS=ON \
+          -DSPEEX=ON \
+          -DSPEEXDSP=ON \
+          -DLIBVPX=ON \
+          -DOGG=ON \
+          -DDSHOW=ON \
+          -DVIDCAP=ON \
+          -DLAMEMP3=ON \
           -DBUILD_TEAMTALK5DLL=OFF \
           -DBUILD_TEAMTALK5PRODLL=OFF \
           -DBUILD_TEAMTALK5LIB=ON \
