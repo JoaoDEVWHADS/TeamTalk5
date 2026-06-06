@@ -14,12 +14,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Cache static ACE libraries
-      id: cache-ace
+    - name: Cache static ACE and dependencies
+      id: cache-dependencies
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ttlibs
-        key: ${{ runner.os }}-ace-static-v3-arm64
+        key: ${{ runner.os }}-static-libs-v4-arm64
 
     - name: Build inside Ubuntu 20.04 Container
       run: |
@@ -85,9 +85,42 @@ jobs:
             mkdir -p /workspace/ttlibs/ACE/include && \
             cp -r \$ACE_ROOT/ace /workspace/ttlibs/ACE/include/ && \
             cp -r \$ACE_ROOT/protocols /workspace/ttlibs/ACE/include/ && \
-            cp \$ACE_ROOT/lib/*.a /workspace/ttlibs/ACE/lib/ ; \
+            cp \$ACE_ROOT/lib/*.a /workspace/ttlibs/ACE/lib/ && \
+            
+            # Copy other system static libraries and headers into TTLIBS structure
+            echo '=== Populating system static libraries in TTLIBS ===' && \
+            # TinyXML
+            mkdir -p /workspace/ttlibs/tinyxml && \
+            cp /usr/lib/aarch64-linux-gnu/libtinyxml.a /workspace/ttlibs/tinyxml/libTinyXML.a && \
+            cp /usr/include/tinyxml.h /workspace/ttlibs/tinyxml/ && \
+            
+            # Speex and SpeexDSP
+            mkdir -p /workspace/ttlibs/speex/lib /workspace/ttlibs/speex/include/speex && \
+            cp /usr/lib/aarch64-linux-gnu/libspeex.a /workspace/ttlibs/speex/lib/ && \
+            cp /usr/lib/aarch64-linux-gnu/libspeexdsp.a /workspace/ttlibs/speex/lib/ && \
+            cp -r /usr/include/speex/* /workspace/ttlibs/speex/include/speex/ && \
+            
+            # Ogg
+            mkdir -p /workspace/ttlibs/ogg/lib /workspace/ttlibs/ogg/include/ogg && \
+            cp /usr/lib/aarch64-linux-gnu/libogg.a /workspace/ttlibs/ogg/lib/ && \
+            cp -r /usr/include/ogg/* /workspace/ttlibs/ogg/include/ogg/ && \
+            
+            # Opus
+            mkdir -p /workspace/ttlibs/opus/lib /workspace/ttlibs/opus/include/opus && \
+            cp /usr/lib/aarch64-linux-gnu/libopus.a /workspace/ttlibs/opus/lib/ && \
+            cp -r /usr/include/opus/* /workspace/ttlibs/opus/include/opus/ && \
+            
+            # Zlib
+            mkdir -p /workspace/ttlibs/zlib/lib /workspace/ttlibs/zlib/include && \
+            cp /usr/lib/aarch64-linux-gnu/libz.a /workspace/ttlibs/zlib/lib/ && \
+            cp /usr/include/zlib.h /usr/include/zconf.h /workspace/ttlibs/zlib/include/ && \
+            
+            # Libvpx
+            mkdir -p /workspace/ttlibs/libvpx/lib /workspace/ttlibs/libvpx/include/vpx && \
+            cp /usr/lib/aarch64-linux-gnu/libvpx.a /workspace/ttlibs/libvpx/lib/ && \
+            cp -r /usr/include/vpx/* /workspace/ttlibs/libvpx/include/vpx/ ; \
           else \
-            echo '=== Cache hit: Using cached static ACE libraries ===' ; \
+            echo '=== Cache hit: Using cached static ACE & system libraries ===' ; \
           fi && \
           
           # 2. Build TeamTalk 5
@@ -95,7 +128,7 @@ jobs:
           cd /workspace && \
           export PYTHONPATH='' && \
           source env.sh && \
-          make CMAKE_EXTRA='-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=OFF -DSPEEX_STATIC=OFF -DLIBVPX_STATIC=OFF -DACE_STATIC=ON -DTTLIBS_ROOT=/workspace/ttlibs -DOGG_STATIC=OFF -DOPUS_STATIC=OFF -DZLIB_STATIC=OFF -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=OFF -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF' -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+          make CMAKE_EXTRA='-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=ON -DSPEEX_STATIC=ON -DLIBVPX_STATIC=ON -DACE_STATIC=ON -DTTLIBS_ROOT=/workspace/ttlibs -DOGG_STATIC=ON -DOPUS_STATIC=ON -DZLIB_STATIC=ON -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=OFF -DSPEEXDSP_STATIC=ON -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF' -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
         "
 
     - name: Upload libTeamTalk5.so Artifact
