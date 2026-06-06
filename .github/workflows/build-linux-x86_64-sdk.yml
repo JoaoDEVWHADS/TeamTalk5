@@ -28,8 +28,8 @@ jobs:
         apt-get update
         DEBIAN_FRONTEND=noninteractive apt-get install -y \
           cmake \
-          g++ \
-          gcc \
+          g++-10 \
+          gcc-10 \
           git \
           make \
           ninja-build \
@@ -50,6 +50,8 @@ jobs:
 
     - name: Build x86_64 SDK (.so)
       run: |
+        export CC=gcc-10
+        export CXX=g++-10
         export PYTHONPATH=""
         cmake -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
