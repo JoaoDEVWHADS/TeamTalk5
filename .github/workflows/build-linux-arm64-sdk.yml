@@ -132,7 +132,7 @@ jobs:
         curl -sLO https://files.portaudio.com/archives/pa_stable_v190700_20210406.tgz
         tar -xf pa_stable_v190700_20210406.tgz
         cd portaudio
-        ./configure --prefix="$PREFIX/portaudio" --enable-static --disable-shared --with-pic
+        ./configure --prefix="$PREFIX/portaudio" --enable-static --disable-shared --with-pic --without-jack
         make -j$(nproc) install
 
         # 8. Compile ACE (only the ace, ace/SSL, protocols/ace/INet libraries)
