@@ -71,7 +71,8 @@ jobs:
 
         New-Item -ItemType Directory -Force -Path "$tc/tinyxml/include"
         New-Item -ItemType Directory -Force -Path "$tc/tinyxml/lib/x64"
-        Copy-Item "$vcpkg/include/tinyxml.h" "$tc/tinyxml/include"
+        Copy-Item "$vcpkg/include/tinyxml.h" "$tc/tinyxml/tinyxml.h"
+        Copy-Item "$vcpkg/include/tinyxml.h" "$tc/tinyxml/include/tinyxml.h"
         Copy-Item "$vcpkg/lib/tinyxml.lib" "$tc/tinyxml/lib/x64/tinyxml.lib"
         Copy-Item "$vcpkg/debug/lib/tinyxml.lib" "$tc/tinyxml/lib/x64/tinyxmld.lib" -ErrorAction SilentlyContinue
 
@@ -101,6 +102,8 @@ jobs:
       run: |
         cmake -S . -B build_win -G "Visual Studio 17 2022" -A x64 `
           -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake `
+          -DCMAKE_CXX_STANDARD=17 `
+          -DCMAKE_CXX_STANDARD_REQUIRED=ON `
           -DBUILD_TEAMTALK_CORE=ON `
           -DWEBRTC=OFF `
           -DBUILD_TEAMTALK_STATIC=OFF `

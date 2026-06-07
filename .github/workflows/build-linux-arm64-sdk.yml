@@ -70,6 +70,102 @@ jobs:
         make -j$(nproc)
         make install
 
+    - name: Compile Static Dependencies from Source
+      shell: bash
+      run: |
+        mkdir -p "$GITHUB_WORKSPACE/deps-build"
+        PREFIX="$GITHUB_WORKSPACE/Library/TeamTalkLib/toolchain"
+        mkdir -p "$PREFIX"
+
+        # 1. Compile zlib
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sL -o zlib-1.3.1.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz
+        tar -xf zlib-1.3.1.tar.gz
+        cd zlib-1.3.1
+        CFLAGS="-fPIC" ./configure --prefix="$PREFIX/zlib" --static
+        make -j$(nproc) install
+
+        # 2. Compile libogg
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.gz
+        tar -xf libogg-1.3.5.tar.gz
+        cd libogg-1.3.5
+        ./configure --prefix="$PREFIX/ogg" --enable-static --disable-shared --with-pic
+        make -j$(nproc) install
+
+        # 3. Compile Opus
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://downloads.xiph.org/releases/opus/opus-1.3.1.tar.gz
+        tar -xf opus-1.3.1.tar.gz
+        cd opus-1.3.1
+        ./configure --prefix="$PREFIX/opus" --enable-static --disable-shared --with-pic
+        make -j$(nproc) install
+
+        # 4. Compile Speex
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://downloads.xiph.org/releases/speex/speex-1.2.0.tar.gz
+        tar -xf speex-1.2.0.tar.gz
+        cd speex-1.2.0
+        ./configure --prefix="$PREFIX/speex" --enable-static --disable-shared --with-pic
+        make -j$(nproc) install
+
+        # 5. Compile Speexdsp
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://downloads.xiph.org/releases/speex/speexdsp-1.2.0.tar.gz
+        tar -xf speexdsp-1.2.0.tar.gz
+        cd speexdsp-1.2.0
+        ./configure --prefix="$PREFIX/speex" --enable-static --disable-shared --with-pic
+        make -j$(nproc) install
+
+        # 6. Compile libvpx
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://github.com/webmproject/libvpx/archive/refs/tags/v1.11.0.tar.gz
+        tar -xf v1.11.0.tar.gz
+        cd libvpx-1.11.0
+        ./configure --prefix="$PREFIX/libvpx" --enable-static --disable-shared --enable-pic --disable-examples --disable-unit-tests
+        make -j$(nproc) install
+
+        # 7. Compile PortAudio
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://files.portaudio.com/archives/pa_stable_v190700_20210406.tgz
+        tar -xf pa_stable_v190700_20210406.tgz
+        cd portaudio
+        ./configure --prefix="$PREFIX/portaudio" --enable-static --disable-shared --with-pic
+        make -j$(nproc) install
+
+        # 8. Compile ACE (only the ace, ace/SSL, protocols/ace/INet libraries)
+        cd "$GITHUB_WORKSPACE/deps-build"
+        curl -sLO https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_12/ACE-6.5.12.tar.gz
+        tar -xf ACE-6.5.12.tar.gz
+        cd ACE_wrappers
+        export ACE_ROOT=$PWD
+        echo '#include "ace/config-linux.h"' > ace/config.h
+        echo 'include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU' > include/makeinclude/platform_macros.GNU
+        echo 'CFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
+        echo 'CXXFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
+        echo 'CCFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
+        echo 'static_libs_only=1' >> include/makeinclude/platform_macros.GNU
+        echo 'ssl=1' >> include/makeinclude/platform_macros.GNU
+        
+        cd ace
+        make -j$(nproc) CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+        cd SSL
+        make -j$(nproc) CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+        cd ../../protocols/ace/INet
+        make -j$(nproc) CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+        make -j$(nproc) -f GNUmakefile.INet_SSL CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+        
+        # Manually install/copy ACE to toolchain
+        mkdir -p "$PREFIX/ACE/include/ace/SSL"
+        mkdir -p "$PREFIX/ACE/include/protocols/ace/"
+        mkdir -p "$PREFIX/ACE/lib"
+        cp -r "$ACE_ROOT/ace" "$PREFIX/ACE/include/"
+        cp -r "$ACE_ROOT/protocols/ace/INet" "$PREFIX/ACE/include/protocols/ace/"
+        cp "$ACE_ROOT/lib/libACE.a" "$PREFIX/ACE/lib/"
+        cp "$ACE_ROOT/lib/libACE_SSL.a" "$PREFIX/ACE/lib/"
+        cp "$ACE_ROOT/lib/libACE_INet.a" "$PREFIX/ACE/lib/"
+        cp "$ACE_ROOT/lib/libACE_INet_SSL.a" "$PREFIX/ACE/lib/"
+
     - name: Build ARM64 SDK (.so)
       shell: bash
       run: |
