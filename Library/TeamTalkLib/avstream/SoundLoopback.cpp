@@ -258,7 +258,7 @@ bool SoundLoopback::StopTest()
 #endif
 
 #if defined(ENABLE_WEBRTC)
-    m_apm.reset();
+    m_apm = nullptr;
 #endif
     m_preprocess_buffer_left.clear();
     m_preprocess_buffer_right.clear();

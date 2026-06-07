@@ -209,7 +209,7 @@ bool MediaPlayback::SetupWebRTCPreprocess(const webrtc::AudioProcessing::Config&
     m_apm->ApplyConfig(webrtc);
     if (m_apm->Initialize() != webrtc::AudioProcessing::kNoError)
     {
-        m_apm.reset();
+        m_apm = nullptr;
         return false;
     }
     return true;

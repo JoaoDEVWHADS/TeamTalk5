@@ -200,7 +200,7 @@ void AudioThread::StopEncoder()
 #endif
 
 #if defined(ENABLE_WEBRTC)
-    m_apm.reset();
+    m_apm = nullptr;
     m_aps.reset();
 #endif
 
@@ -246,7 +246,7 @@ bool AudioThread::UpdatePreprocessor(const teamtalk::AudioPreprocessor& preproce
 #if defined(ENABLE_WEBRTC)
     if (preprocess.preprocessor != AUDIOPREPROCESSOR_WEBRTC)
     {
-        m_apm.reset();
+        m_apm = nullptr;
         m_aps.reset();
     }
 #endif
@@ -282,7 +282,7 @@ bool AudioThread::UpdatePreprocessor(const teamtalk::AudioPreprocessor& preproce
         m_apm->ApplyConfig(preprocess.webrtc);
         if (m_apm->Initialize() != webrtc::AudioProcessing::kNoError)
         {
-            m_apm.reset();
+            m_apm = nullptr;
             MYTRACE(ACE_TEXT("Failed to initialize WebRTC audio preprocessor\n"));
             return false;
         }

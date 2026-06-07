@@ -125,7 +125,7 @@ TEST_CASE("webrtc-apm")
 
     std::vector<int16_t> in_buff(af.channels * in_cfg.num_frames()), apm_buff(af.channels * out_cfg.num_frames());
 
-    std::unique_ptr<webrtc::AudioProcessing> apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
+    rtc::scoped_refptr<webrtc::AudioProcessing> apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
 
     // first try gain_controller1
 
@@ -180,7 +180,7 @@ TEST_CASE("webrtc-double-gain")
 
     std::vector<int16_t> in_buff(af.channels * in_cfg.num_frames()), apm_buff(af.channels * out_cfg.num_frames());
 
-    std::unique_ptr<webrtc::AudioProcessing> apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
+    rtc::scoped_refptr<webrtc::AudioProcessing> apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
 
     webrtc::AudioProcessing::Config apm_cfg;
     rawfile.Close();
