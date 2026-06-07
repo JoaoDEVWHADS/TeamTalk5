@@ -28,10 +28,6 @@ jobs:
         $vcpkg = "C:/vcpkg/installed/x64-windows-static"
         $tc = "Library/TeamTalkLib/toolchain"
         
-        Write-Host "=== RECURSIVE .LIB SEARCH ==="
-        Get-ChildItem -Path "C:/vcpkg/installed/x64-windows-static" -Filter *.lib -Recurse | ForEach-Object { $_.FullName }
-        Write-Host "============================="
-        
         New-Item -ItemType Directory -Force -Path "$tc/opus/include"
         New-Item -ItemType Directory -Force -Path "$tc/opus/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/opus/*" "$tc/opus/include"
@@ -57,10 +53,8 @@ jobs:
         Copy-Item "$vcpkg/include/zconf.h" "$tc/zlib"
         Copy-Item "$vcpkg/include/zlib.h" "$tc/zlib/include"
         Copy-Item "$vcpkg/include/zconf.h" "$tc/zlib/include"
-        Copy-Item "$vcpkg/lib/zlib.lib" "$tc/zlib/lib/x64/zlib.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/lib/z.lib" "$tc/zlib/lib/x64/zlib.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/debug/lib/zlibd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/debug/lib/zd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/zs.lib" "$tc/zlib/lib/x64/zlib.lib"
+        Copy-Item "$vcpkg/debug/lib/zsd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/ogg/include"
         New-Item -ItemType Directory -Force -Path "$tc/ogg/lib/x64"
@@ -93,14 +87,14 @@ jobs:
 
         New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE"
-        Copy-Item "$vcpkg/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEs.lib"
-        Copy-Item "$vcpkg/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLs.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INets.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/lib/ACE_INet_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_INet_SSLs.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/debug/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEsd.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/debug/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLsd.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/debug/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INetsd.lib" -ErrorAction SilentlyContinue
-        Copy-Item "$vcpkg/debug/lib/ACE_INet_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_INet_SSLsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/ACEs.lib" "$tc/ACE/ACE/lib/x64/ACEs.lib"
+        Copy-Item "$vcpkg/lib/ACE_SSLs.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLs.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/ACE_INets.lib" "$tc/ACE/ACE/lib/x64/ACE_INets.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/ACE_INet_SSLs.lib" "$tc/ACE/ACE/lib/x64/ACE_INet_SSLs.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACEsd.lib" "$tc/ACE/ACE/lib/x64/ACEsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE_SSLsd.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE_INetsd.lib" "$tc/ACE/ACE/lib/x64/ACE_INetsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE_INet_SSLsd.lib" "$tc/ACE/ACE/lib/x64/ACE_INet_SSLsd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/openssl/include"
         Copy-Item -Recurse "$vcpkg/include/openssl" "$tc/openssl/include"
