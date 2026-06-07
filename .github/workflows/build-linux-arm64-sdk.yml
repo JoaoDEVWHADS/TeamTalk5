@@ -66,7 +66,10 @@ jobs:
           --disable-programs \
           --disable-doc \
           --enable-pic \
-          --disable-yasm
+          --disable-yasm \
+          --disable-xcb \
+          --disable-xlib \
+          --disable-xcb-shm
         make -j$(nproc)
         make install
 

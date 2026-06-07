@@ -67,7 +67,10 @@ jobs:
           --disable-shared \
           --disable-programs \
           --disable-doc \
-          --enable-pic
+          --enable-pic \
+          --disable-xcb \
+          --disable-xlib \
+          --disable-xcb-shm
         make -j$(nproc)
         make install
 
