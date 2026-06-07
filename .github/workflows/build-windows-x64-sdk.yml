@@ -81,7 +81,9 @@ jobs:
         Copy-Item "$vcpkg/include/portaudio.h" "$tc/portaudio/include"
         Copy-Item "$vcpkg/include/pa_*.h" "$tc/portaudio/include" -ErrorAction SilentlyContinue
         Copy-Item "$vcpkg/lib/portaudio.lib" "$tc/portaudio/lib/x64/portaudio.lib"
+        Copy-Item "$vcpkg/lib/portaudio.lib" "$tc/portaudio/lib/x64/pastatic.lib"
         Copy-Item "$vcpkg/debug/lib/portaudio.lib" "$tc/portaudio/lib/x64/portaudiod.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/portaudio.lib" "$tc/portaudio/lib/x64/pastaticd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE"
