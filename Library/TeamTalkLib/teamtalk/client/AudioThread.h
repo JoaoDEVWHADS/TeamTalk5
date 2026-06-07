@@ -34,6 +34,7 @@
 #endif
 #if defined(ENABLE_WEBRTC)
 #include <avstream/WebRTCPreprocess.h>
+#include <api/scoped_refptr.h>
 #endif
 #if defined(ENABLE_OPUS)
 #include <codec/OpusEncoder.h>
@@ -50,7 +51,7 @@ typedef std::function< void (const teamtalk::AudioCodec& codec,
                              const std::vector<int>& enc_frame_sizes,
                              const media::AudioFrame& org_frame) > audioencodercallback_t;
 
-class AudioThread : protected ACE_Task<ACE_MT_SYNCH>
+class AudioThread : public ACE_Task<ACE_MT_SYNCH>
 {
 public:
     AudioThread();

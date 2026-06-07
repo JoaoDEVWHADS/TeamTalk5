@@ -32,6 +32,7 @@
 
 #if defined(ENABLE_WEBRTC)
 #include <avstream/WebRTCPreprocess.h>
+#include <api/scoped_refptr.h>
 #endif
 
 #include <avstream/AudioResampler.h>

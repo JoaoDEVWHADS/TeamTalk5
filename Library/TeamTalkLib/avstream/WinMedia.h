@@ -34,7 +34,7 @@
 
 bool GetDSMediaFileProp(const ACE_TString& filename, MediaFileProp& fileprop);
 
-class DSWrapperThread : protected ACE_Task<ACE_MT_SYNCH>
+class DSWrapperThread : public ACE_Task<ACE_MT_SYNCH>
                       , public MediaStreamer
 {
 public:

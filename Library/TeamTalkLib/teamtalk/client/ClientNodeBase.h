@@ -115,7 +115,7 @@ namespace teamtalk {
     };
 
     // subclass must implement TimerEvent()
-    class ClientNodeBase : protected ACE_Task<ACE_MT_SYNCH>
+    class ClientNodeBase : public ACE_Task<ACE_MT_SYNCH>
                          , public TimerListener
                          , public soundsystem::StreamDuplex
                          , public EventSuspender

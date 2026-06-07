@@ -48,7 +48,7 @@ typedef std::function< bool (ACE_Message_Block* org_frame, /* can be NULL */
                              ACE_UINT32 packet_no,
                              ACE_UINT32 timestamp) > videoencodercallback_t;
 
-class VideoThread : protected ACE_Task<ACE_MT_SYNCH>
+class VideoThread : public ACE_Task<ACE_MT_SYNCH>
 {
 public:
     VideoThread();
