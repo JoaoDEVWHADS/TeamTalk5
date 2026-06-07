@@ -58,7 +58,9 @@ jobs:
         New-Item -ItemType Directory -Force -Path "$tc/ogg/include"
         New-Item -ItemType Directory -Force -Path "$tc/ogg/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/ogg" "$tc/ogg/include"
+        Copy-Item "$vcpkg/lib/ogg.lib" "$tc/ogg/lib/x64/ogg.lib"
         Copy-Item "$vcpkg/lib/ogg.lib" "$tc/ogg/lib/x64/libogg.lib"
+        Copy-Item "$vcpkg/debug/lib/ogg.lib" "$tc/ogg/lib/x64/oggd.lib" -ErrorAction SilentlyContinue
         Copy-Item "$vcpkg/debug/lib/ogg.lib" "$tc/ogg/lib/x64/liboggd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/libvpx/lib/x64"
