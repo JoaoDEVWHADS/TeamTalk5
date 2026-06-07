@@ -79,7 +79,7 @@ jobs:
         Copy-Item "$vcpkg/debug/lib/portaudio.lib" "$tc/portaudio/lib/x64/portaudiod.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/lib/x64"
-        Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE/ace"
+        Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE"
         Copy-Item "$vcpkg/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEs.lib"
         Copy-Item "$vcpkg/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLs.lib" -ErrorAction SilentlyContinue
         Copy-Item "$vcpkg/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INets.lib" -ErrorAction SilentlyContinue

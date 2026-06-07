@@ -267,7 +267,7 @@ namespace teamtalk {
             if((bantype & BANTYPE_IPADDR) && ipaddr.length())
             {
                 ACE_TString rgx = ACE_TEXT("^") + ipaddr + ACE_TEXT("$");
-#if defined(UNICODE)
+#if defined(UNICODE) && defined(ACE_USES_WCHAR)
                 match &= std::regex_search(user.ipaddr.c_str(), std::wregex(rgx.c_str()));
 #else
                 // equality not nescessary when debian7 is no longer supported
