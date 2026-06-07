@@ -242,7 +242,7 @@ void PortAudio::FillDevices(sounddevices_t& sounddevs)
             continue;
 
         DeviceInfo device;
-        device.devicename = devinfo->name;
+        device.devicename = Utf8ToUnicode(devinfo->name);
 #if defined(WIN32)
         device.deviceid = Utf8ToUnicode(devinfo->name);
 #endif
