@@ -67,8 +67,8 @@ jobs:
 
         New-Item -ItemType Directory -Force -Path "$tc/tinyxml/include"
         New-Item -ItemType Directory -Force -Path "$tc/tinyxml/lib/x64"
-        Copy-Item "$vcpkg/include/tinyxml*.h" "$tc/tinyxml"
-        Copy-Item "$vcpkg/include/tinyxml*.h" "$tc/tinyxml/include"
+        Copy-Item "$vcpkg/include/tinyxml*" "$tc/tinyxml"
+        Copy-Item "$vcpkg/include/tinyxml*" "$tc/tinyxml/include"
         Copy-Item "$vcpkg/lib/tinyxml.lib" "$tc/tinyxml/lib/x64/tinyxml.lib"
         Copy-Item "$vcpkg/debug/lib/tinyxml.lib" "$tc/tinyxml/lib/x64/tinyxmld.lib" -ErrorAction SilentlyContinue
 
@@ -114,7 +114,7 @@ jobs:
 
     - name: Build SDK (Release)
       run: |
-        cmake --build build_win --config Release
+        cmake --build build_win --config Release --target TeamTalk5DLL
 
     - name: Upload Windows x64 DLL Artifact
       uses: actions/upload-artifact@v4
