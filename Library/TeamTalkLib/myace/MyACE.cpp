@@ -29,12 +29,14 @@
 #include <ace/Version.h>
 #include <memory>
 
+#if !defined(_WIN32)
 #include <ace/INet/HTTP_URL.h>
 #include <ace/INet/HTTP_ClientRequestHandler.h>
 
 #if defined(ENABLE_ENCRYPTION)
 #include <ace/INet/HTTPS_URL.h>
 #include <ace/INet/HTTPS_SessionFactory.h>
+#endif
 #endif
 
 #include <string>
@@ -598,6 +600,7 @@ std::vector<ACE_INET_Addr> DetermineHostAddress(const ACE_TString& host, int por
 
 int HttpRequest(const ACE_CString& url, std::string& doc)
 {
+#if !defined(_WIN32)
 #if defined(ENABLE_ENCRYPTION)
 #if defined(ENABLE_TEAMTALKACE)
     // Enable SNI enabled HTTPS sessions
@@ -628,6 +631,9 @@ int HttpRequest(const ACE_CString& url, std::string& doc)
 #endif
     
     return status.is_ok() ? 1 : 0;
+#else
+    return 0;
+#endif
 }
 
 std::string URLEncode(const std::string& utf8)
