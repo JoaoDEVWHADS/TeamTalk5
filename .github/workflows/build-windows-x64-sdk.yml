@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies via vcpkg
       run: |
-        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml ace[ssl] libogg zlib
+        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml ace[ssl,inet] libogg zlib
 
     - name: Map vcpkg libraries to TeamTalk toolchain structure
       shell: pwsh
@@ -79,7 +79,6 @@ jobs:
 
         New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE"
-        Copy-Item -Recurse "$vcpkg/include/protocols" "$tc/ACE/ACE"
         Copy-Item "$vcpkg/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEs.lib"
         Copy-Item "$vcpkg/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLs.lib" -ErrorAction SilentlyContinue
         Copy-Item "$vcpkg/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INets.lib" -ErrorAction SilentlyContinue
