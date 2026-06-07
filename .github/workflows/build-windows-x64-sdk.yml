@@ -59,7 +59,6 @@ jobs:
         Copy-Item "$vcpkg/lib/ogg.lib" "$tc/ogg/lib/x64/libogg.lib"
         Copy-Item "$vcpkg/debug/lib/ogg.lib" "$tc/ogg/lib/x64/liboggd.lib" -ErrorAction SilentlyContinue
 
-        New-Item -ItemType Directory -Force -Path "$tc/libvpx/include"
         New-Item -ItemType Directory -Force -Path "$tc/libvpx/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/vpx" "$tc/libvpx"
         Copy-Item "$vcpkg/lib/vpx.lib" "$tc/libvpx/lib/x64/vpxmt.lib"
@@ -79,9 +78,8 @@ jobs:
         Copy-Item "$vcpkg/debug/lib/portaudio.lib" "$tc/portaudio/lib/x64/portaudiod.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/lib/x64"
-        New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/protocols"
         Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE"
-        Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE/protocols"
+        Copy-Item -Recurse "$vcpkg/include/protocols" "$tc/ACE/ACE"
         Copy-Item "$vcpkg/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEs.lib"
         Copy-Item "$vcpkg/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLs.lib" -ErrorAction SilentlyContinue
         Copy-Item "$vcpkg/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INets.lib" -ErrorAction SilentlyContinue
