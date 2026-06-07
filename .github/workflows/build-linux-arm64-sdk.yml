@@ -52,12 +52,29 @@ jobs:
           libswresample-dev \
           libswscale-dev
 
+    - name: Compile Static FFmpeg
+      shell: bash
+      run: |
+        curl -sLO https://ffmpeg.org/releases/ffmpeg-4.2.9.tar.bz2
+        tar -xf ffmpeg-4.2.9.tar.bz2
+        cd ffmpeg-4.2.9
+        ./configure \
+          --prefix="$GITHUB_WORKSPACE/Library/TeamTalkLib/toolchain/ffmpeg" \
+          --enable-static \
+          --disable-shared \
+          --disable-programs \
+          --disable-doc \
+          --enable-pic \
+          --disable-yasm
+        make -j$(nproc)
+        make install
+
     - name: Build ARM64 SDK (.so)
       shell: bash
       run: |
         export PYTHONPATH=""
         source env.sh
-        make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=ON -DSPEEX_STATIC=ON -DLIBVPX_STATIC=ON -DACE_STATIC=ON -DOGG_STATIC=ON -DOPUS_STATIC=ON -DZLIB_STATIC=ON -DFFMPEG_STATIC=OFF -DPORTAUDIO_STATIC=ON -DSPEEXDSP_STATIC=ON -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+        make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=ON -DSPEEX_STATIC=ON -DLIBVPX_STATIC=ON -DACE_STATIC=ON -DOGG_STATIC=ON -DOPUS_STATIC=ON -DZLIB_STATIC=ON -DFFMPEG_STATIC=ON -DPORTAUDIO_STATIC=ON -DSPEEXDSP_STATIC=ON -DOPUSTOOLS=OFF -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
 
 
     - name: Upload libTeamTalk5.so Artifact
