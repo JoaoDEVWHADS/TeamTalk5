@@ -115,7 +115,7 @@ jobs:
         curl -sLO https://downloads.xiph.org/releases/speex/speexdsp-1.2.0.tar.gz
         tar -xf speexdsp-1.2.0.tar.gz
         cd speexdsp-1.2.0
-        ./configure --prefix="$PREFIX/speexdsp" --enable-static --disable-shared --with-pic
+        ./configure --prefix="$PREFIX/speex" --enable-static --disable-shared --with-pic
         make -j$(nproc) install
 
         # 6. Compile libvpx
