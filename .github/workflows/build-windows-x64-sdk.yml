@@ -28,6 +28,11 @@ jobs:
         $vcpkg = "C:/vcpkg/installed/x64-windows"
         $tc = "Library/TeamTalkLib/toolchain"
         
+        Write-Host "=== VCPKG LIB CONTENTS ==="
+        Get-ChildItem -Path "$vcpkg/lib" | Select-Object Name
+        Write-Host "=== VCPKG DEBUG LIB CONTENTS ==="
+        Get-ChildItem -Path "$vcpkg/debug/lib" | Select-Object Name
+        
         New-Item -ItemType Directory -Force -Path "$tc/opus/include"
         New-Item -ItemType Directory -Force -Path "$tc/opus/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/opus/*" "$tc/opus/include"
