@@ -24,14 +24,7 @@ jobs:
 
     - name: Install dependencies via vcpkg
       run: |
-        vcpkg install --triplet x64-windows \
-          openssl \
-          opus \
-          speex \
-          speexdsp \
-          libvpx \
-          portaudio \
-          tinyxml
+        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml
 
     - name: Configure CMake
       run: |
