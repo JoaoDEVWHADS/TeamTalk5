@@ -32,7 +32,13 @@
 
 #include <avstream/DMOResampler.h> // need SetWaveMediaType()
 #include <pa_win_wasapi.h>
-#include <px_win_ds.h>    //the directx mixer
+
+// Stub out px_win_ds functions since we are using standard PortAudio from vcpkg
+typedef int PxFrequency;
+inline void Px_DsSetFrequency(void*, PxFrequency) {}
+inline int Px_DsGetFrequency(void*) { return 0; }
+inline void Px_DsSetPosition(void*, float, float, float) {}
+inline void Px_DsGetPosition(void*, float*, float*, float*) {}
 
 #include <Objbase.h>
 #include <Mmsystem.h>
