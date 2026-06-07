@@ -244,8 +244,7 @@ void PortAudio::FillDevices(sounddevices_t& sounddevs)
         DeviceInfo device;
         device.devicename = devinfo->name;
 #if defined(WIN32)
-        if(devinfo->uniqueID)
-            device.deviceid = devinfo->uniqueID;
+        device.deviceid = Utf8ToUnicode(devinfo->name);
 #endif
         device.soundsystem = GetSoundSystem(devinfo);
         device.id = i;
@@ -313,9 +312,7 @@ void PortAudio::FillDevices(sounddevices_t& sounddevs)
         device.features |= SOUNDDEVICEFEATURE_DUPLEXMODE;
 
 #if defined(WIN32)
-        device.wavedeviceid = devinfo->wavedeviceid;
-        if (devinfo->max3dBuffers > 0)
-            device.features |= SOUNDDEVICEFEATURE_3DPOSITION;
+        device.wavedeviceid = -1;
 
         // CWMAudioAECCapture
         if (device.soundsystem == SOUND_API_WASAPI && device.input_channels.size())
