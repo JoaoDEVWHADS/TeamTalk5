@@ -1,0 +1,97 @@
+name: Build Linux x64 SDK (v5.8.1)
+
+on:
+  push:
+    branches: [ "v5.8.1-custom" ]
+  pull_request:
+    branches: [ "v5.8.1-custom" ]
+  workflow_dispatch:
+
+jobs:
+  build-x64:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.04
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y \
+          cmake \
+          curl \
+          g++ \
+          git \
+          libasound2-dev \
+          libglib2.0-dev \
+          libpcap-dev \
+          libpulse-dev \
+          libspeechd-dev \
+          libssl-dev \
+          libtool \
+          libxss-dev \
+          ninja-build \
+          pkg-config \
+          libopus-dev \
+          libspeex-dev \
+          libspeexdsp-dev \
+          libvpx-dev \
+          libace-dev \
+          libace-inet-dev \
+          libace-inet-ssl-dev \
+          libtinyxml-dev \
+          libogg-dev \
+          zlib1g-dev \
+          portaudio19-dev \
+          libavcodec-dev \
+          libavdevice-dev \
+          libavfilter-dev \
+          libavformat-dev \
+          libavutil-dev \
+          libswresample-dev \
+          libswscale-dev
+
+    - name: Compile Static FFmpeg
+      shell: bash
+      run: |
+        curl -sLO https://ffmpeg.org/releases/ffmpeg-4.2.9.tar.bz2
+        tar -xf ffmpeg-4.2.9.tar.bz2
+        cd ffmpeg-4.2.9
+        ./configure \
+          --prefix="$GITHUB_WORKSPACE/Library/TeamTalkLib/toolchain/ffmpeg" \
+          --enable-static \
+          --disable-shared \
+          --disable-programs \
+          --disable-doc \
+          --enable-pic \
+          --disable-yasm
+        make -j$(nproc)
+        make install
+
+    - name: Build x64 SDK (.so)
+      shell: bash
+      run: |
+        export PYTHONPATH=""
+        source env.sh
+        make CMAKE_EXTRA="-DWEBRTC=OFF -DBUILD_TEAMTALK_STATIC=OFF -DBUILD_TEAMTALK_ACE=OFF -DTINYXML_STATIC=ON -DSPEEX_STATIC=ON -DLIBVPX_STATIC=ON -DACE_STATIC=ON -DOGG_STATIC=ON -DOPUS_STATIC=ON -DZLIB_STATIC=ON -DFFMPEG_STATIC=ON -DPORTAUDIO_STATIC=ON -DSPEEXDSP_STATIC=ON -DOPUSTOOLS=ON -DBUILD_TEAMTALKPRO_SERVERS=OFF -DBUILD_TEAMTALK_CLIENTS=OFF -DBUILD_TEAMTALK_LIBRARIES=OFF -DBUILD_TEAMTALK5DLL=ON -DBUILD_TEAMTALK5PRODLL=OFF -DBUILD_TEAMTALK5LIB=OFF -DBUILD_TEAMTALK5PROLIB=OFF" -C Build ubuntu64 > build.log 2>&1 || (tail -n 200 build.log && exit 1)
+
+    - name: Strip Debug Symbols
+      shell: bash
+      run: |
+        strip --strip-unneeded Library/TeamTalk_DLL/libTeamTalk5.so
+
+    - name: Upload libTeamTalk5.so Artifact
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: libTeamTalk5-linux-x64
+        path: Library/TeamTalk_DLL/libTeamTalk5.so
+
+    - name: Upload Build Log (On Failure)
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: compile-build-log-x64
+        path: build.log

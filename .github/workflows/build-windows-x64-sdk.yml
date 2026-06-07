@@ -1,0 +1,62 @@
+name: Build Windows x64 SDK (v5.8.1)
+
+on:
+  push:
+    branches: [ "v5.8.1-custom" ]
+  pull_request:
+    branches: [ "v5.8.1-custom" ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Set up vcpkg
+      run: |
+        vcpkg integrate install
+
+    - name: Install dependencies via vcpkg
+      run: |
+        vcpkg install --triplet x64-windows \
+          openssl \
+          opus \
+          speex \
+          speexdsp \
+          libvpx \
+          portaudio \
+          tinyxml
+
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build_win -G "Visual Studio 17 2022" -A x64 `
+          -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake `
+          -DWEBRTC=OFF `
+          -DBUILD_TEAMTALK_STATIC=OFF `
+          -DBUILD_TEAMTALK_ACE=OFF `
+          -DBUILD_TEAMTALKPRO_SERVERS=OFF `
+          -DBUILD_TEAMTALK_CLIENTS=OFF `
+          -DBUILD_TEAMTALK_LIBRARIES=OFF `
+          -DBUILD_TEAMTALK5DLL=ON `
+          -DBUILD_TEAMTALK5PRODLL=OFF `
+          -DBUILD_TEAMTALK5LIB=OFF `
+          -DBUILD_TEAMTALK5PROLIB=OFF
+
+    - name: Build SDK (Release)
+      run: |
+        cmake --build build_win --config Release
+
+    - name: Upload Windows x64 DLL Artifact
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: libTeamTalk5-windows-x64
+        path: |
+          Library/TeamTalk_DLL/Release/TeamTalk5.dll
+          Library/TeamTalk_DLL/Release/TeamTalk5.lib
