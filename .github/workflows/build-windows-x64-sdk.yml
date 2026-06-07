@@ -20,13 +20,18 @@ jobs:
 
     - name: Install dependencies via vcpkg
       run: |
-        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml ace[ssl,wchar] libogg zlib
+        vcpkg install --triplet x64-windows-static openssl opus speex speexdsp libvpx portaudio tinyxml ace[ssl,wchar] libogg zlib
 
     - name: Map vcpkg libraries to TeamTalk toolchain structure
       shell: pwsh
       run: |
-        $vcpkg = "C:/vcpkg/installed/x64-windows"
+        $vcpkg = "C:/vcpkg/installed/x64-windows-static"
         $tc = "Library/TeamTalkLib/toolchain"
+        
+        Write-Host "=== VCPKG LIB CONTENTS ==="
+        Get-ChildItem -Path "$vcpkg/lib" | Select-Object Name
+        Write-Host "=== VCPKG DEBUG LIB CONTENTS ==="
+        Get-ChildItem -Path "$vcpkg/debug/lib" | Select-Object Name
         
         New-Item -ItemType Directory -Force -Path "$tc/opus/include"
         New-Item -ItemType Directory -Force -Path "$tc/opus/lib/x64"
@@ -53,7 +58,9 @@ jobs:
         Copy-Item "$vcpkg/include/zconf.h" "$tc/zlib"
         Copy-Item "$vcpkg/include/zlib.h" "$tc/zlib/include"
         Copy-Item "$vcpkg/include/zconf.h" "$tc/zlib/include"
-        Copy-Item "$vcpkg/lib/z.lib" "$tc/zlib/lib/x64/zlib.lib"
+        Copy-Item "$vcpkg/lib/zlib.lib" "$tc/zlib/lib/x64/zlib.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/z.lib" "$tc/zlib/lib/x64/zlib.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/zlibd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
         Copy-Item "$vcpkg/debug/lib/zd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/ogg/include"
