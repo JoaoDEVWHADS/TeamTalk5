@@ -144,16 +144,17 @@ jobs:
         echo 'include $(ACE_ROOT)/include/makeinclude/platform_linux.GNU' > include/makeinclude/platform_macros.GNU
         echo 'CFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
         echo 'CXXFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
+        echo 'CCFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
         echo 'static_libs_only=1' >> include/makeinclude/platform_macros.GNU
         echo 'ssl=1' >> include/makeinclude/platform_macros.GNU
         
         cd ace
-        make -j$(nproc)
+        make -j$(nproc) CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
         cd SSL
-        make -j$(nproc)
+        make -j$(nproc) CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
         cd ../../protocols/ace/INet
-        make -j$(nproc)
-        make -j$(nproc) -f GNUmakefile.INet_SSL
+        make -j$(nproc) CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+        make -j$(nproc) -f GNUmakefile.INet_SSL CCFLAGS="-fPIC" CFLAGS="-fPIC" CXXFLAGS="-fPIC"
         
         # Manually install/copy ACE to toolchain
         mkdir -p "$PREFIX/ACE/include/ace/SSL"
