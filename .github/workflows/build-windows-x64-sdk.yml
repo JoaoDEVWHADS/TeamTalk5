@@ -24,7 +24,7 @@ jobs:
 
     - name: Install dependencies via vcpkg
       run: |
-        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml ace libogg
+        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml ace libogg zlib
 
     - name: Map vcpkg libraries to TeamTalk toolchain structure
       shell: pwsh
