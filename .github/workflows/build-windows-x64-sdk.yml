@@ -54,8 +54,8 @@ jobs:
         New-Item -ItemType Directory -Force -Path "$tc/zlib/lib/x64"
         Copy-Item "$vcpkg/include/zlib.h" "$tc/zlib/include"
         Copy-Item "$vcpkg/include/zconf.h" "$tc/zlib/include"
-        Copy-Item "$vcpkg/lib/zlib.lib" "$tc/zlib/lib/x64/zlib.lib"
-        Copy-Item "$vcpkg/debug/lib/zlibd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/zlib*.lib" "$tc/zlib/lib/x64/zlib.lib"
+        Copy-Item "$vcpkg/debug/lib/zlib*.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/ogg/include"
         New-Item -ItemType Directory -Force -Path "$tc/ogg/lib/x64"
