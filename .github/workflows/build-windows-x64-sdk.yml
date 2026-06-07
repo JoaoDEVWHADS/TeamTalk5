@@ -28,10 +28,9 @@ jobs:
         $vcpkg = "C:/vcpkg/installed/x64-windows-static"
         $tc = "Library/TeamTalkLib/toolchain"
         
-        Write-Host "=== VCPKG LIB CONTENTS ==="
-        Get-ChildItem -Path "$vcpkg/lib" | Select-Object Name
-        Write-Host "=== VCPKG DEBUG LIB CONTENTS ==="
-        Get-ChildItem -Path "$vcpkg/debug/lib" | Select-Object Name
+        Write-Host "=== RECURSIVE .LIB SEARCH ==="
+        Get-ChildItem -Path "C:/vcpkg/installed/x64-windows-static" -Filter *.lib -Recurse | ForEach-Object { $_.FullName }
+        Write-Host "============================="
         
         New-Item -ItemType Directory -Force -Path "$tc/opus/include"
         New-Item -ItemType Directory -Force -Path "$tc/opus/lib/x64"
