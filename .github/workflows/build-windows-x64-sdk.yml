@@ -129,5 +129,5 @@ jobs:
       with:
         name: libTeamTalk5-windows-x64
         path: |
-          Library/TeamTalk_DLL/Release/TeamTalk5.dll
-          Library/TeamTalk_DLL/Release/TeamTalk5.lib
+          Library/TeamTalk_DLL/TeamTalk5.dll
+          Library/TeamTalk_DLL/TeamTalk5.lib
