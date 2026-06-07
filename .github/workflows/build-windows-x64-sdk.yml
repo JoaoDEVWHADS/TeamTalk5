@@ -24,7 +24,78 @@ jobs:
 
     - name: Install dependencies via vcpkg
       run: |
-        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml
+        vcpkg install --triplet x64-windows openssl opus speex speexdsp libvpx portaudio tinyxml ace libogg
+
+    - name: Map vcpkg libraries to TeamTalk toolchain structure
+      shell: pwsh
+      run: |
+        $vcpkg = "C:/vcpkg/installed/x64-windows"
+        $tc = "Library/TeamTalkLib/toolchain"
+        
+        New-Item -ItemType Directory -Force -Path "$tc/opus/include"
+        New-Item -ItemType Directory -Force -Path "$tc/opus/lib/x64"
+        Copy-Item -Recurse "$vcpkg/include/opus/*" "$tc/opus/include"
+        Copy-Item "$vcpkg/lib/opus.lib" "$tc/opus/lib/x64/opus.lib"
+        Copy-Item "$vcpkg/debug/lib/opus.lib" "$tc/opus/lib/x64/opusd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/speex/include"
+        New-Item -ItemType Directory -Force -Path "$tc/speex/lib/x64"
+        Copy-Item -Recurse "$vcpkg/include/speex" "$tc/speex/include"
+        Copy-Item "$vcpkg/lib/speex.lib" "$tc/speex/lib/x64/libspeex_sse2.lib"
+        Copy-Item "$vcpkg/debug/lib/speex.lib" "$tc/speex/lib/x64/libspeexd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/speexdsp/include"
+        New-Item -ItemType Directory -Force -Path "$tc/speexdsp/lib/x64"
+        Copy-Item -Recurse "$vcpkg/include/speex" "$tc/speexdsp/include"
+        Copy-Item "$vcpkg/lib/speexdsp.lib" "$tc/speexdsp/lib/x64/libspeexdsp.lib"
+        Copy-Item "$vcpkg/debug/lib/speexdsp.lib" "$tc/speexdsp/lib/x64/libspeexdspd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/zlib/include"
+        New-Item -ItemType Directory -Force -Path "$tc/zlib/lib/x64"
+        Copy-Item "$vcpkg/include/zlib.h" "$tc/zlib/include"
+        Copy-Item "$vcpkg/include/zconf.h" "$tc/zlib/include"
+        Copy-Item "$vcpkg/lib/zlib.lib" "$tc/zlib/lib/x64/zlib.lib"
+        Copy-Item "$vcpkg/debug/lib/zlibd.lib" "$tc/zlib/lib/x64/zlibd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/ogg/include"
+        New-Item -ItemType Directory -Force -Path "$tc/ogg/lib/x64"
+        Copy-Item -Recurse "$vcpkg/include/ogg" "$tc/ogg/include"
+        Copy-Item "$vcpkg/lib/ogg.lib" "$tc/ogg/lib/x64/libogg.lib"
+        Copy-Item "$vcpkg/debug/lib/ogg.lib" "$tc/ogg/lib/x64/liboggd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/libvpx/include"
+        New-Item -ItemType Directory -Force -Path "$tc/libvpx/lib/x64"
+        Copy-Item -Recurse "$vcpkg/include/vpx" "$tc/libvpx/include"
+        Copy-Item "$vcpkg/lib/vpx.lib" "$tc/libvpx/lib/x64/vpxmt.lib"
+        Copy-Item "$vcpkg/debug/lib/vpx.lib" "$tc/libvpx/lib/x64/vpxmtd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/tinyxml/include"
+        New-Item -ItemType Directory -Force -Path "$tc/tinyxml/lib/x64"
+        Copy-Item "$vcpkg/include/tinyxml.h" "$tc/tinyxml/include"
+        Copy-Item "$vcpkg/lib/tinyxml.lib" "$tc/tinyxml/lib/x64/tinyxml.lib"
+        Copy-Item "$vcpkg/debug/lib/tinyxml.lib" "$tc/tinyxml/lib/x64/tinyxmld.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/portaudio/include"
+        New-Item -ItemType Directory -Force -Path "$tc/portaudio/lib/x64"
+        Copy-Item "$vcpkg/include/portaudio.h" "$tc/portaudio/include"
+        Copy-Item "$vcpkg/lib/portaudio.lib" "$tc/portaudio/lib/x64/portaudio.lib"
+        Copy-Item "$vcpkg/debug/lib/portaudio.lib" "$tc/portaudio/lib/x64/portaudiod.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/ACE/ACE/lib/x64"
+        Copy-Item -Recurse "$vcpkg/include/ace" "$tc/ACE/ACE/ace"
+        Copy-Item "$vcpkg/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEs.lib"
+        Copy-Item "$vcpkg/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLs.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INets.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/lib/ACE_INet_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_INet_SSLs.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE.lib" "$tc/ACE/ACE/lib/x64/ACEsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_SSLsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE_INet.lib" "$tc/ACE/ACE/lib/x64/ACE_INetsd.lib" -ErrorAction SilentlyContinue
+        Copy-Item "$vcpkg/debug/lib/ACE_INet_SSL.lib" "$tc/ACE/ACE/lib/x64/ACE_INet_SSLsd.lib" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Force -Path "$tc/openssl/include"
+        Copy-Item -Recurse "$vcpkg/include/openssl" "$tc/openssl/include"
+        Copy-Item "$vcpkg/lib/libssl.lib" "$tc/openssl/libssl.lib"
+        Copy-Item "$vcpkg/lib/libcrypto.lib" "$tc/openssl/libcrypto.lib"
 
     - name: Configure CMake
       run: |
