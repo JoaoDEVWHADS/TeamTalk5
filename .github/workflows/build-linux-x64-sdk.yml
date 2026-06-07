@@ -134,7 +134,7 @@ jobs:
         ./configure --prefix="$PREFIX/portaudio" --enable-static --disable-shared --with-pic
         make -j$(nproc) install
 
-        # 8. Compile ACE (only the ace, ace/SSL, protocols/ace/INet, protocols/ace/INet/SSL libraries)
+        # 8. Compile ACE (only the ace, ace/SSL, protocols/ace/INet libraries)
         cd "$GITHUB_WORKSPACE/deps-build"
         curl -sLO https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_12/ACE-6.5.12.tar.gz
         tar -xf ACE-6.5.12.tar.gz
@@ -145,6 +145,7 @@ jobs:
         echo 'CFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
         echo 'CXXFLAGS += -fPIC' >> include/makeinclude/platform_macros.GNU
         echo 'static_libs_only=1' >> include/makeinclude/platform_macros.GNU
+        echo 'ssl=1' >> include/makeinclude/platform_macros.GNU
         
         cd ace
         make -j$(nproc)
@@ -152,8 +153,7 @@ jobs:
         make -j$(nproc)
         cd ../../protocols/ace/INet
         make -j$(nproc)
-        cd SSL
-        make -j$(nproc)
+        make -j$(nproc) -f GNUmakefile.INet_SSL
         
         # Manually install/copy ACE to toolchain
         mkdir -p "$PREFIX/ACE/include/ace/SSL"
