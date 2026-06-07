@@ -44,6 +44,7 @@ jobs:
         New-Item -ItemType Directory -Force -Path "$tc/speexdsp/lib/x64"
         Copy-Item -Recurse "$vcpkg/include/speex" "$tc/speexdsp/include"
         Copy-Item "$vcpkg/lib/speexdsp.lib" "$tc/speexdsp/lib/x64/libspeexdsp.lib"
+        Copy-Item "$vcpkg/lib/speexdsp.lib" "$tc/speexdsp/lib/x64/libspeexdsp_sse.lib"
         Copy-Item "$vcpkg/debug/lib/speexdsp.lib" "$tc/speexdsp/lib/x64/libspeexdspd.lib" -ErrorAction SilentlyContinue
 
         New-Item -ItemType Directory -Force -Path "$tc/zlib/include"
