@@ -29,6 +29,10 @@ using namespace std;
 
 #define MAX_PACKETS_ON_WIRE 16
 
+#ifndef ACE_MAX
+#define ACE_MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+
 namespace teamtalk {
 
 audiopackets_t BuildAudioPackets(uint16_t src_userid,

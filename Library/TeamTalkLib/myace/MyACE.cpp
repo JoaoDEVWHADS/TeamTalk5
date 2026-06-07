@@ -27,7 +27,7 @@
 #include <ace/UTF16_Encoding_Converter.h>
 #include <ace/OS_NS_ctype.h>
 #include <ace/Version.h>
-#include <ace/Auto_Ptr.h>
+#include <memory>
 
 #include <ace/INet/HTTP_URL.h>
 #include <ace/INet/HTTP_ClientRequestHandler.h>
@@ -608,7 +608,7 @@ int HttpRequest(const ACE_CString& url, std::string& doc)
 #endif /* ENABLE_TEAMTALKACE */
 #endif /* ENABLE_ENCRYPTION */
 
-    ACE_Auto_Ptr<ACE::INet::URL_Base> url_safe(ACE::INet::URL_Base::create_from_string(url));
+    std::unique_ptr<ACE::INet::URL_Base> url_safe(ACE::INet::URL_Base::create_from_string(url));
     if(url_safe.get() == 0)
         return -1;
 
