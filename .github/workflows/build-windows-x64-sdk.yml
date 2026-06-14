@@ -1,6 +1,9 @@
 name: Build Windows x64 SDK (v5.8.1)
 
 on:
+  push:
+    branches:
+      - v5.8.1-custom
   workflow_dispatch:
 
 jobs:
