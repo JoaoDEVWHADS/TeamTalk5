@@ -539,13 +539,6 @@ std::vector<ACE_INET_Addr> DetermineHostAddress(const ACE_TString& host, int por
     // lookups from completing if there is no, or only a loopback, IPv6
     // interface configured. See Bugzilla 4211 for more info.
 
-    hints.ai_flags = AI_V4MAPPED;
-#if defined(ACE_HAS_IPV6) && defined(AI_ALL)
-    // Without AI_ALL, Windows machines exhibit inconsistent behaviors on
-    // difference machines we have tested.
-    hints.ai_flags |= AI_ALL;
-#endif
-
     // Note - specify the socktype here to avoid getting multiple entries
     // returned with the same address for different socket types or
     // protocols. If this causes a problem for some reason (an address that's
@@ -574,6 +567,9 @@ std::vector<ACE_INET_Addr> DetermineHostAddress(const ACE_TString& host, int por
             sockaddr_in6 in6_;
 #endif /* ACE_HAS_IPV6 */
         };
+
+        if (curr->ai_addrlen > sizeof(ip46))
+            continue;
 
         ip46 addr;
         ACE_OS::memcpy(&addr, curr->ai_addr, curr->ai_addrlen);
