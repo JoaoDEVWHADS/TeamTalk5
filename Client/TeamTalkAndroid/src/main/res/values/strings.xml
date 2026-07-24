@@ -14,6 +14,7 @@
     <string name="title_activity_channel_prop">Channel Properties</string>
     <string name="title_activity_user_prop">User Properties</string>
     <string name="title_activity_text_message">Text Message</string>
+    <string name="text_user_typing_title">%1$s is typing...</string>
     <string name="title_activity_preferences">Preferences</string>
     <string name="title_activity_stream_media">Stream media file to channel</string>
     <string name="action_createchannel">Create</string>
@@ -54,6 +55,8 @@
     <string name="pref_summary_vox_audio_icon">Play sound when voice activation button is pressed</string>
     <string name="pref_title_vox_triggered_icon">Voice activation triggered</string>
     <string name="pref_summary_vox_triggered_icon">Play sound when voice activation is triggered</string>
+    <string name="pref_title_typing_icon">User typing sound</string>
+    <string name="pref_summary_typing_icon">Play sound when user is typing a private message</string>
     <string name="pref_title_intercept_audio_icon">Intercept sound</string>
     <string name="pref_summary_intercept_audio_icon">Play sound when intercept starts or ends</string>
     <string name="pref_title_private_message_audio_icon">Private message</string>
@@ -100,10 +103,14 @@
     <string name="pref_summary_server_login">Announce name of user logging in</string>
     <string name="pref_title_server_logout">User logs out of the server</string>
     <string name="pref_summary_server_logout">Announce name of user logging out</string>
-    <string name="pref_title_channel_join">User joins the channel</string>
-    <string name="pref_summary_channel_join">Announce name of the user joining the channel</string>
-    <string name="pref_title_channel_leave">User leaves the channel</string>
-    <string name="pref_summary_channel_leave">Announce name of the user leaving the channel</string>
+    <string name="pref_title_all_channel_join">Users joins other channels</string>
+    <string name="pref_summary_all_channel_join">Announce name of the users joining other channels</string>
+    <string name="pref_title_all_channel_leave">Users leaves other channels</string>
+    <string name="pref_summary_all_channel_leave">Announce name of the users leaving other channels</string>
+    <string name="pref_title_channel_join">Users joins the current channel</string>
+    <string name="pref_summary_channel_join">Announce name of the users joining the current channel</string>
+    <string name="pref_title_channel_leave">Users leaves the current channel</string>
+    <string name="pref_summary_channel_leave">Announce name of the users leaving the current channel</string>
     <string name="pref_title_private_message">Private messages</string>
     <string name="pref_summary_private_message">Announce private messages</string>
     <string name="pref_title_channel_message">Channel messages</string>
@@ -124,6 +131,8 @@
     <string name="pref_summary_subscription_desk">Announce subscription of desktop sessions</string>
     <string name="pref_title_subscription_media">Media stream subscription</string>
     <string name="pref_summary_subscription_media">Announce subscription of media streams</string>
+    <string name="pref_title_typing">User typing</string>
+    <string name="pref_summary_typing">Announce when user is typing a private message</string>
     <string name="pref_title_subscription_intercept_user_msg">User messages intercept</string>
     <string name="pref_summary_subscription_intercept_user_msg">Announce intercept of user messages</string>
     <string name="pref_title_subscription_intercept_channel_msg">Channel messages intercept</string>
@@ -166,6 +175,9 @@
 
     <string name="text_tts_loggedin">has logged in</string>
     <string name="text_tts_loggedout">has logged out</string>
+    <string name="text_tts_user_joined_other_channel">%1$s has joined channel %2$s</string>
+    <string name="text_tts_user_left_other_channel">%1$s has left channel %2$s</string>
+    <string name="text_root_chan">root</string>
     <string name="text_tts_joined_chan">has joined the channel</string>
     <string name="text_tts_left_chan">has left the channel</string>
     <string name="text_tts_private_message">Private message from %1$s - %2$s</string>
@@ -204,9 +216,11 @@
     <string name="title_section_speexvbr">Speex VBR</string>
     <string name="title_section_noaudio">No Audio</string>
     <string name="opus_application">Application</string>
-
     <string name="button_tx">TX</string>
     <string name="button_remove">Remove</string>
+    <string name="action_cancel">Cancel download</string>
+    <string name="action_downloadfile">Download file</string>
+    <string name="action_removefile">Remove file</string>
     <string name="action_banchan">Ban from current channel</string>
     <string name="action_bansrv">Ban from server</string>
     <string name="action_edit">Edit Channel</string>
@@ -219,12 +233,31 @@
     <string name="action_move">Move Here</string>
     <string name="action_select">Select For Move</string>
     <string name="action_deselect">Deselect For Move</string>
+    <string name="action_allowvoice">Allow voice transmission for everyone</string>
+    <string name="action_disallowvoice">Disallow voice transmission for everyone</string>
+    <string name="action_allowvideo">Allow video transmission for everyone</string>
+    <string name="action_disallowvideo">Disallow video transmission for everyone</string>
+    <string name="action_allowdesktop">Allow desktop transmission for everyone</string>
+    <string name="action_disallowdesktop">Disallow desktop transmission for everyone</string>
+    <string name="action_allowmedia">Allow media files transmission for everyone</string>
+    <string name="action_disallowmedia">Disallow media files transmission for everyone</string>
+    <string name="action_allowchanmsg">Allow channel text messages for everyone</string>
+    <string name="action_disallowchanmsg">Disallow channel text messages for everyone</string>
     <string name="action_exportsrv">Export server</string>
     <string name="action_editsrv">Edit server</string>
     <string name="action_removesrv">Remove server</string>
     <string name="action_upload">Upload File</string>
     <string name="action_broadcast">Broadcast Message</string>
     <string name="action_stream">Stream a media file</string>
+    <string name="action_stop">Stop stream</string>
+    <string name="action_pause">Pause stream</string>
+    <string name="action_resume">Resume stream</string>
+    <string name="action_statusnick">Change Nickname and Status</string>
+    <string name="action_copyname">Copy Name</string>
+    <string name="action_copymessage">Copy Content Only</string>
+    <string name="action_deletemessage">Delete</string>
+    <string name="action_clear">Clear</string>
+    <string name="text_no_browser">No app found to open this link</string>
     <string name="button_select_media_file">Browse</string>
     <string name="button_stream_media_file">Stream</string>
     <string name="button_msg">Message</string>
@@ -253,8 +286,12 @@
     <string name="user_prop_title_ipaddress">IP Address:</string>
     <string name="user_prop_title_voice_volume">Voice Volume</string>
     <string name="user_prop_title_mute_voice">Mute Voice</string>
+    <string name="user_prop_title_mute_voice_left">Mute Left Voice</string>
+    <string name="user_prop_title_mute_voice_right">Mute Right Voice</string>
     <string name="user_prop_title_media_volume">Media File Volume</string>
     <string name="user_prop_title_mute_media">Mute Media File</string>
+    <string name="user_prop_title_mute_media_left">Mute Left Media File</string>
+    <string name="user_prop_title_mute_media_right">Mute Right Media File</string>
     <string name="user_prop_title_subscribe_txtmsg">Subscribe to user messages</string>
     <string name="user_prop_title_subscribe_chanmsg">Subscribe to channel messages</string>
     <string name="user_prop_title_subscribe_bcastmsg">Subscribe to broadcast messages</string>
@@ -328,7 +365,6 @@
     <string name="default_port" translatable="false">10333</string>
 
     <string name="channel_password_prompt">Enter channel password</string>
-    <string name="button_download">Download</string>
     <string name="download_succeeded">File %1$s has been successfully downloaded and saved to %2$s</string>
     <string name="download_failed">Failed to download file %1$s</string>
     <string name="upload_succeeded">File %1$s has been successfully uploaded</string>
@@ -345,6 +381,7 @@
     <string name="transfer_stopped">Transfer stopped</string>
     <string name="complete">Complete</string>
     <string name="remote_file_exists">File %1$s already exists in this channel</string>
+    <string name="cancel_transfer_confirmation">Do you really wish to cancel download of %1$s?</string>
     <string name="remote_file_remove_confirmation">Do you really wish to remove file %1$s from this channel?</string>
     <string name="server_remove_confirmation">Do you really wish to remove %1$s from the server list?</string>
     <string name="channel_remove_confirmation">Do you really wish to remove channel %1$s?</string>
@@ -463,6 +500,7 @@
     <string name="pref_summary_gender">Check for female icon</string>
     <string name="user_state_away">Away</string>
     <string name="user_state_operator">Channel operator</string>
+    <string name="user_state_admin">Administrator</string>
     <string name="user_state_selected">Selected for move </string>
     <string name="pref_title_userloggedin_icon">User logged in</string>
     <string name="pref_summary_userloggedin_icon">Play sound when an user logs in</string>
@@ -473,6 +511,7 @@
     <string name="pref_title_channel_message_sent">Sent channel messages</string>
     <string name="pref_summary_channel_message_sent">Announce channel messages sent</string>
     <string name="text_tts_channel_message_sent">Channel message sent: %1$s</string>
+    <string name="text_tts_user_typing">%1$s is typing...</string>
     <string name="pref_summary_official_servers">Include official servers in server list</string>
     <string name="pref_title_official_servers">Show official servers</string>
     <string name="pref_summary_unofficial_servers">Include unofficial servers in server list</string>
@@ -488,6 +527,11 @@
     <string name="action_revoke_operator">Revoke Operator</string>
     <string name="text_operator_password">Enter channel operator password</string>
     <string name="text_broadcast_message">Enter broadcast message</string>
+    <string name="text_status_message">Status message</string>
+    <string name="text_status_mode">Status mode</string>
+    <string name="status_mode_available">Available</string>
+    <string name="status_mode_away">Away</string>
+    <string name="status_mode_question">Question</string>
     <string name="online_users">Online Users</string>
 
 
