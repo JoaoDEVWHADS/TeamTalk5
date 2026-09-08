@@ -1,4 +1,4 @@
-﻿#if !defined(TEAMTALKSRVDLL_H)
+#if !defined(TEAMTALKSRVDLL_H)
 #define TEAMTALKSRVDLL_H
 
 /*
@@ -18,7 +18,7 @@
  * client's version can be seen in the @a szVersion member of the
  * #User struct. */
 
-#define TEAMTALK_SERVER_VERSION "5.23.0.5204"
+#define TEAMTALK_SERVER_VERSION "5.40.0.0"
 
 #ifdef __cplusplus
 extern "C" {

@@ -730,7 +730,7 @@
 					"$(inherited)",
 					../../Library/TeamTalk_DLL/,
 				);
-				MARKETING_VERSION = 5.23;
+				MARKETING_VERSION = 5.40;
 				PRODUCT_BUNDLE_IDENTIFIER = BearWare.dk.iTeamTalk5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -762,7 +762,7 @@
 					"$(inherited)",
 					../../Library/TeamTalk_DLL/,
 				);
-				MARKETING_VERSION = 5.23;
+				MARKETING_VERSION = 5.40;
 				PRODUCT_BUNDLE_IDENTIFIER = BearWare.dk.iTeamTalk5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
