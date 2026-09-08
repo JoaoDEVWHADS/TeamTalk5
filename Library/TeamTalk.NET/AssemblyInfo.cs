@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2005-2018, BearWare.dk
  * 
  * Contact Information:
@@ -58,5 +58,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("5.23.0.5204")]
+[assembly: AssemblyVersion("5.40.0.0")]
 
