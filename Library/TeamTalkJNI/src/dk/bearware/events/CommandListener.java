@@ -40,6 +40,7 @@ public interface CommandListener
     , ClientEventListener.OnCmdChannelUpdateListener
     , ClientEventListener.OnCmdChannelRemoveListener
     , ClientEventListener.OnCmdServerUpdateListener
+    , ClientEventListener.OnCmdServerStatisticsListener
     , ClientEventListener.OnCmdFileNewListener
     , ClientEventListener.OnCmdFileRemoveListener
     , ClientEventListener.OnCmdUserAccountListener

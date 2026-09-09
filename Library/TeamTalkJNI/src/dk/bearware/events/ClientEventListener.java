@@ -32,6 +32,7 @@ import dk.bearware.FileTransfer;
 import dk.bearware.MediaFileInfo;
 import dk.bearware.RemoteFile;
 import dk.bearware.ServerProperties;
+import dk.bearware.ServerStatistics;
 import dk.bearware.SoundDevice;
 import dk.bearware.TextMessage;
 import dk.bearware.User;
@@ -103,6 +104,9 @@ public interface ClientEventListener {
     }
     interface OnCmdServerUpdateListener {
         void onCmdServerUpdate(ServerProperties serverproperties);
+    }
+    interface OnCmdServerStatisticsListener {
+        void onCmdServerStatistics(ServerStatistics serverstatistics);
     }
     interface OnCmdFileNewListener {
         void onCmdFileNew(RemoteFile remotefile);

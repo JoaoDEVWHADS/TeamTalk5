@@ -165,6 +165,7 @@ public class TeamTalkEventHandler {
         registerOnCmdChannelUpdate(l, true);
         registerOnCmdChannelRemove(l, true);
         registerOnCmdServerUpdate(l, true);
+        registerOnCmdServerStatistics(l, true);
         registerOnCmdFileNew(l, true);
         registerOnCmdFileRemove(l, true);
         registerOnCmdUserAccount(l, true);
@@ -191,6 +192,7 @@ public class TeamTalkEventHandler {
         registerOnCmdChannelUpdate(l, false);
         registerOnCmdChannelRemove(l, false);
         registerOnCmdServerUpdate(l, false);
+        registerOnCmdServerStatistics(l, false);
         registerOnCmdFileNew(l, false);
         registerOnCmdFileRemove(l, false);
         registerOnCmdUserAccount(l, false);
@@ -345,6 +347,15 @@ public class TeamTalkEventHandler {
                 void processTTMessage(TTMessage pMsg) {
                     assert (pMsg.ttType == TTType.__SERVERPROPERTIES);
                     l.onCmdServerUpdate(pMsg.serverproperties);
+                }
+            });
+    }
+    public void registerOnCmdServerStatistics(ClientEventListener.OnCmdServerStatisticsListener l, boolean enable) {
+        register(ClientEvent.CLIENTEVENT_CMD_SERVERSTATISTICS, l, enable, new ProcessTTMessage(l) {
+                @Override
+                void processTTMessage(TTMessage pMsg) {
+                    assert (pMsg.ttType == TTType.__SERVERSTATISTICS);
+                    l.onCmdServerStatistics(pMsg.serverstatistics);
                 }
             });
     }
