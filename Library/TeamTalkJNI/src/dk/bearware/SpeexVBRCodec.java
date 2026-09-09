@@ -32,6 +32,9 @@ public class SpeexVBRCodec
     public boolean bDTX;
     public int nTxIntervalMSec;
     public boolean bStereoPlayback;
+    public int quality_mode;
+    public int bitrate_mode;
+    public int txinterval_mode;
     
     public SpeexVBRCodec() {}
     

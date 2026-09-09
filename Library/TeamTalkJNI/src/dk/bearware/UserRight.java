@@ -52,6 +52,7 @@ public interface UserRight
     public static final int USERRIGHT_TEXTMESSAGE_USER            = 0x00400000;
     public static final int USERRIGHT_TEXTMESSAGE_CHANNEL         = 0x00800000;
 
+    public static final int USERRIGHT_DEFAULT                     = 12842503;
     public static final int USERRIGHT_ALL                         = 0xFFFFFFFF & ~USERRIGHT_LOCKED_NICKNAME & ~USERRIGHT_LOCKED_STATUS;
 
 }

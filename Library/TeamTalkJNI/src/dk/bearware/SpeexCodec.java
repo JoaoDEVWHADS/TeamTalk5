@@ -29,6 +29,8 @@ public class SpeexCodec
     public int nQuality;
     public int nTxIntervalMSec;
     public boolean bStereoPlayback;
+    public int quality_mode;
+    public int txinterval_mode;
     
     public SpeexCodec() {}
     public SpeexCodec(boolean set_defaults) {
