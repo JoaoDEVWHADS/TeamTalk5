@@ -72,8 +72,8 @@ public interface ClientEventListener {
         void onCmdMyselfLoggedOut();
     }
     interface OnCmdMyselfKickedFromChannelListener {
-        void onCmdMyselfKickedFromChannel();
-        void onCmdMyselfKickedFromChannel(User kicker);
+        void onCmdMyselfKickedFromChannel(int channelid);
+        void onCmdMyselfKickedFromChannel(int channelid, User kicker);
     }
     interface OnCmdUserLoggedInListener {
         void onCmdUserLoggedIn(User user);

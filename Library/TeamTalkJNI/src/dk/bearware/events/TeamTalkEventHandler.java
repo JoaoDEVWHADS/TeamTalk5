@@ -248,9 +248,9 @@ public class TeamTalkEventHandler {
                 @Override
                 void processTTMessage(TTMessage pMsg) {
                     if(pMsg.ttType == TTType.__NONE)
-                        l.onCmdMyselfKickedFromChannel();
+                        l.onCmdMyselfKickedFromChannel(pMsg.nSource);
                     else if(pMsg.ttType == TTType.__USER)
-                        l.onCmdMyselfKickedFromChannel(pMsg.user);
+                        l.onCmdMyselfKickedFromChannel(pMsg.nSource, pMsg.user);
                 }
             });
     }
